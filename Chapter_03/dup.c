@@ -4,9 +4,22 @@
 #include <fcntl.h>
 #include <string.h>
 
-int main(int argc, char *argv[]) {
+void dup_test() {
     
-    int fd = open(argv[1], O_CREAT | O_RDWR, 0755);
+    int newfd = dup(STDOUT_FILENO);
+    if (newfd < 0) {
+        perror("dup ");
+        exit(1);
+    }
+    
+    if (write(newfd, "hello world\n", strlen("hello world\n")) < 0) {
+        perror("write ");
+        exit(1);
+    }
+}
+
+void dup2_test(const char *path_name) {
+    int fd = open(path_name, O_CREAT | O_RDWR, 0755);
     if (fd < 0) {
         perror("open ");
         exit(1);
@@ -40,6 +53,11 @@ int main(int argc, char *argv[]) {
         perror("write ");
         exit(1);
     }
+}
+
+int main(int argc, char *argv[]) {
+    
+    dup_test();
     
     
     return 0;
