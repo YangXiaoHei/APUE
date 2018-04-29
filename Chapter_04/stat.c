@@ -14,7 +14,30 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     
-    printf("st_mode = %ld\n", st.st_mode);
+    char mode_str[64] = { 0 };
+    long mode = st.st_mode;
+    sprintf(mode_str,
+            "%c%c%c %c%c%c %c%c%c",
+            
+            /* user */
+            (mode & S_IRUSR) ? 'r' : '-',
+            (mode & S_IWUSR) ? 'w' : '-',
+            ((mode & S_IXUSR) ? 'x' : ((mode & S_ISUID) ? 's' : ((mode & S_ISGID) ? 'S' : '-'))),
+            
+            /* group */
+            (mode & S_IRGRP) ? 'r' : '-',
+            (mode & S_IRGRP) ? 'w' : '-',
+            ((mode & S_IXGRP) ? 'x' : ((mode & S_ISUID) ? 's' : ((mode & S_ISGID) ? 'S' : '-'))),
+            
+            /* other */
+            (mode & S_IROTH) ? 'r' : '-',
+            (mode & S_IROTH) ? 'w' : '-',
+            ((mode & S_IXOTH) ? 'x' : ((mode & S_ISUID) ? 's' : ((mode & S_ISGID) ? 'S' : '-')))
+            
+            );
+    
+    printf("st_mode = %d\n", st.st_mode);
+    printf("st_mode = %s\n", mode_str);
     printf("st_ino = %ld\n", st.st_ino);
     printf("st_dev = %ld\n", st.st_dev);
     printf("st_rdev = %ld\n", st.st_rdev);
