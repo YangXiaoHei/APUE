@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) {
     
     struct stat st;
     
-    if (stat(argv[1], &st) < 0) {
+    if (lstat(argv[1], &st) < 0) {
         perror("stat ");
         exit(1);
     }
@@ -36,15 +36,34 @@ int main(int argc, char *argv[]) {
             
             );
     
-    printf("st_mode = %d\n", st.st_mode);
+    printf("\n[file_name = %s]\n", argv[1]);
+    if (S_ISREG(st.st_mode)) {
+        printf("[file_type = regular]\n");
+    } else if (S_ISSOCK(st.st_mode)) {
+        printf("[file_type = socket]\n");
+    } else if (S_ISDIR(st.st_mode)) {
+        printf("[file_type = directory]\n");
+    } else if (S_ISBLK(st.st_mode)) {
+        printf("[file_type = block special]\n");
+    } else if (S_ISFIFO(st.st_mode)) {
+        printf("[file_type = fifo]\n");
+    } else if (S_ISCHR(st.st_mode)) {
+        printf("[file_type = character special]\n");
+    } else if (S_ISLNK(st.st_mode)) {
+        printf("[file_type = symbolic link]\n");
+    } else {
+        printf("[file_type = unknown mode]\n");
+    }
+    
+    printf("st_mode = %ld\n", (long)st.st_mode);
     printf("st_mode = %s\n", mode_str);
-    printf("st_ino = %ld\n", st.st_ino);
-    printf("st_dev = %ld\n", st.st_dev);
-    printf("st_rdev = %ld\n", st.st_rdev);
-    printf("st_nlink = %ld\n", st.st_nlink);
-    printf("st_uid = %ld\n", st.st_uid);
-    printf("st_gid = %ld\n", st.st_gid);
-    printf("st_size = %ld\n", st.st_size);
+    printf("st_ino = %ld\n", (long)st.st_ino);
+    printf("st_dev = %ld\n", (long)st.st_dev);
+    printf("st_rdev = %ld\n", (long)st.st_rdev);
+    printf("st_nlink = %ld\n", (long)st.st_nlink);
+    printf("st_uid = %ld\n", (long)st.st_uid);
+    printf("st_gid = %ld\n", (long)st.st_gid);
+    printf("st_size = %ld\n", (long)st.st_size);
     
     char atime[64], mtime[64], ctime[64];
     bzero(atime, sizeof(atime));
@@ -87,12 +106,17 @@ int main(int argc, char *argv[]) {
             ct->tm_sec);
     
     
+    printf("atime = %ld  %ld\n", (long)st.st_atimespec.tv_sec, (long)st.st_atimespec.tv_nsec);
+    printf("mtime = %ld  %ld\n", (long)st.st_mtimespec.tv_sec, (long)st.st_atimespec.tv_nsec);
+    printf("ctime = %ld  %ld\n", (long)st.st_ctimespec.tv_sec, (long)st.st_atimespec.tv_nsec);
+    
     printf("st_atime = %s", atime);
     printf("st_mtime = %s", mtime);
     printf("st_ctime = %s", ctime);
     
-    printf("st_blksize = %ld\n", st.st_blksize);
-    printf("st_blocks = %ld\n", st.st_blocks);
+    printf("st_blksize = %ld\n", (long)st.st_blksize);
+    printf("st_blocks = %ld\n", (long)st.st_blocks);
+    printf("\n");
     
     return 0;
 }
