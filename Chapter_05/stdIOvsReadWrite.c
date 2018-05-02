@@ -54,12 +54,49 @@ void fgetsfputs(const char *src, const char *dst) {
     fclose(src_fp);
 }
 
+void freadfwrite(const char *src, const char *dst) {
+    
+    /*
+     fread(void *restrict ptr, size_t size, size_t nitems,
+     FILE *restrict stream);
+     
+     size_t
+     fwrite(const void *restrict ptr, size_t size, size_t nitems,
+     FILE *restrict stream);
+     
+     */
+    FILE *src_fp = fopen(src, "r");
+    FILE *dst_fp = fopen(dst, "a+");
+    if (src_fp == NULL || dst_fp == NULL) {
+        printf("fopen fail\n");
+        exit(1);
+    }
+    char buf[5] = { 0 };
+    while (fread(buf, sizeof(buf), 1, src_fp) != NULL) {
+        if (fwrite(buf, sizeof(buf),1, dst_fp) == EOF) {
+            break;
+        }
+    }
+    
+    if (ferror(dst_fp)) {
+        printf("fputs fail\n");
+    }
+    if (ferror(src_fp)) {
+        printf("fgets fail\n");
+    }
+    
+    fclose(dst_fp);
+    fclose(src_fp);
+}
+
 int main(int argc, char *argv[]) {
     
     if (strcmp(argv[1], "fgetc") == 0) {
         fgetcfputc(argv[2], argv[3]);
     } else if (strcmp(argv[1], "fgets") == 0) {
         fgetsfputs(argv[2], argv[3]);
+    } else if (strcmp(argv[1], "fread") == 0) {
+        freadfwrite(argv[2], argv[3]);
     }
     
     return 0;
