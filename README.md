@@ -6,7 +6,7 @@
 `-i 显示文件的 i 节点编号`
 `-d 命令将文件夹当作文件对待，而不是递归地深入`
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/1.1.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/1.1.png=200x100)
 
 ##### 1.2 分析图 1-6 程序的输出，说明进程 ID 为 852 和 853 的进程发生了什么情况？
 
