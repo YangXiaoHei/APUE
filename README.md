@@ -33,6 +33,7 @@
 
 在类型定义同时定义一个专属宏，将类型定义和该专属宏在编译期作绑定，然后在类型定义时，先判断有无定义宏，若没有，则进行相应的类型定义。
 
+```C
 	// a.h
 	typedef unsigned long   __uint64_t;
 	typedef long            __int64_t;
@@ -83,24 +84,24 @@
 	typedef __int8_t int8_t;
 	#define __INT8_TYPE__
 	#endif
-
+```
  ##### 2.2  检查系统的头文件，列出实现基本系统数据类型所用到的实际数据类型。
- 
+ ```C
 	 操作系统 : MacBook Pro 10.13.4 High Sierra
 	 
 	  clock_t 	-> 	unsigned long
 	  pid_t 	-> 	int
 	  comp_t	-> 	unsigned short
-	  dev_t		-> 	int
+	  dev_t	-> 	int
 	  fd_set	-> 	struct fd_set {
 	    				int fds_bits[32];
 					}
 	  fpos_t	->	long long
-	  gid_t		->	unsigned int
-	  ino_t		->	unsigned long long
+	  gid_t	->	unsigned int
+	  ino_t	->	unsigned long long
 	  mode_t	->	unsigned short
 	  nlink_t	->	unsigned short
-	  off_t		->	long long
+	  off_t	->	long long
 	  pthread_t	->	struct _opaque_pthread_t {
 					long __sig;
 					struct __darwin_pthread_handler_rec  *__cleanup_stack;
@@ -111,14 +112,15 @@
 					void *__arg;			// Argument to pass
 					struct __darwin_pthread_handler_rec *__next;
 				};
-	  ptrdiff_t	->	long
-	  rlim_t	->	unsigned long long
+	  ptrdiff_t		->	long
+	  rlim_t		->	unsigned long long
 	  sig_atomic_t	->	int
-	  sigset_t	->	unsigned int
-	  size_t	->	unsigned long
-	  ssize_t	->	long
-	  time_t	->	long
+	  sigset_t		->	unsigned int
+	  size_t		->	unsigned long
+	  ssize_t		->	long
+	  time_t		->	long
 	  uid_t		->	unsigned int
-	  wchar_t	-> 	四字节内置类型
+	  wchar_t		-> 	四字节内置类型
+```
  
 
