@@ -33,41 +33,92 @@
 
 在类型定义同时定义一个专属宏，将类型定义和该专属宏在编译期作绑定，然后在类型定义时，先判断有无定义宏，若没有，则进行相应的类型定义。
 
+	// a.h
+	typedef unsigned long   __uint64_t;
+	typedef long            __int64_t;
+	typedef unsigned int    __uint32_t;
+	typedef int             __int32_t;
+	typedef unsigned short  __uint16_t;
+	typedef short           __int16_t;
+	typedef unsigned char   __uint8_t;
+	typedef char            __int8_t;
+
+	// b.h
+	#ifndef __UINT64_TYPE__
+	typedef __uint64_t uint64_t;
+	#define __UINT64_TYPE__
+	#endif
+
+	#ifndef __INT64_TYPE__
+	typedef __int64_t int64_t;
+	#define __INT64_TYPE__
+	#endif
+
+	#ifndef __UINT32_TYPE__
+	typedef __uint32_t uint32_t;
+	#define __UINT32_TYPE__
+	#endif
+
+	#ifndef __INT32_TYPE__
+	typedef __int32_t int32_t;
+	#define __INT32_TYPE__
+	#endif
+
+	#ifndef __UINT16_TYPE__
+	typedef __uint16_t uint16_t;
+	#define __UINT16_TYPE__
+	#endif
+
+	#ifndef __INT16_TYPE__
+	typedef __int16_t int16_t;
+	#define __INT16_TYPE__
+	#endif
+
+	#ifndef __UINT8_TYPE__
+	typedef __uint8_t uint8_t;
+	#define __UINT8_TYPE__
+	#endif
+
+	#ifndef __INT8_TYPE__
+	typedef __int8_t int8_t;
+	#define __INT8_TYPE__
+	#endif
+
  ##### 2.2  检查系统的头文件，列出实现基本系统数据类型所用到的实际数据类型。
  
 	 操作系统 : MacBook Pro 10.13.4 High Sierra
 	 
-	  clock_t 	-> unsigned long
-	  pid_t 	-> int
-	  comp_t	-> unsigned short
-	  dev_t		-> int
-	  fd_set	-> struct fd_set {
+	  clock_t 	-> 	unsigned long
+	  pid_t 	-> 	int
+	  comp_t	-> 	unsigned short
+	  dev_t		-> 	int
+	  fd_set	-> 	struct fd_set {
 	    				int fds_bits[32];
 					}
 	  fpos_t	->	long long
-	  gid_t	->	unsigned int
-	  ino_t	->	unsigned long long
+	  gid_t		->	unsigned int
+	  ino_t		->	unsigned long long
 	  mode_t	->	unsigned short
 	  nlink_t	->	unsigned short
-	  off_t	->	long long
+	  off_t		->	long long
 	  pthread_t	->	struct _opaque_pthread_t {
-						long __sig;
-						struct __darwin_pthread_handler_rec  *__cleanup_stack;
-						char __opaque[8176];
-					};
-					struct __darwin_pthread_handler_rec {
-						void (*__routine)(void *);	// Routine to call
-						void *__arg;			// Argument to pass
-						struct __darwin_pthread_handler_rec *__next;
-					};
+					long __sig;
+					struct __darwin_pthread_handler_rec  *__cleanup_stack;
+					char __opaque[8176];
+				};
+				struct __darwin_pthread_handler_rec {
+					void (*__routine)(void *);	// Routine to call
+					void *__arg;			// Argument to pass
+					struct __darwin_pthread_handler_rec *__next;
+				};
 	  ptrdiff_t	->	long
-	  rlim_t		->	unsigned long long
+	  rlim_t	->	unsigned long long
 	  sig_atomic_t	->	int
 	  sigset_t	->	unsigned int
-	  size_t		->	unsigned long
-	  ssize_t		->	long
-	  time_t		->	long
+	  size_t	->	unsigned long
+	  ssize_t	->	long
+	  time_t	->	long
 	  uid_t		->	unsigned int
-	  wchar_t		-> 四字节内置类型
+	  wchar_t	-> 	四字节内置类型
  
 
