@@ -26,3 +26,48 @@
 
 > 32 位有符号 int 的最大值为 2 ^ 31 - 1 = 2147483647，因此总共是 21474836 秒，合计 248 天
 
+
+# Chapter_02
+
+##### 2.1   在 2.8 节中提到一些基本系统数据类型可以在多个头文件中定义，例如，在 FreeBSD 8.0 中，size_t 在 29 个不同的头文件中都有定义。由于一个程序可能包含这 29 个不同的头文件，但是 ISO C 却不允许对同一个名字多次 typedef，那么如何编写这些头文件呢？
+
+在类型定义同时定义一个专属宏，将类型定义和该专属宏在编译期作绑定，然后在类型定义时，先判断有无定义宏，若没有，则进行相应的类型定义。
+
+ ##### 2.2  检查系统的头文件，列出实现基本系统数据类型所用到的实际数据类型。
+ 
+	 操作系统 : MacBook Pro 10.13.4 High Sierra
+	 
+	  clock_t 	-> unsigned long
+	  pid_t 	-> int
+	  comp_t	-> unsigned short
+	  dev_t		-> int
+	  fd_set	-> struct fd_set {
+	    				int fds_bits[32];
+					}
+	  fpos_t	->	long long
+	  gid_t	->	unsigned int
+	  ino_t	->	unsigned long long
+	  mode_t	->	unsigned short
+	  nlink_t	->	unsigned short
+	  off_t	->	long long
+	  pthread_t	->	struct _opaque_pthread_t {
+						long __sig;
+						struct __darwin_pthread_handler_rec  *__cleanup_stack;
+						char __opaque[8176];
+					};
+					struct __darwin_pthread_handler_rec {
+						void (*__routine)(void *);	// Routine to call
+						void *__arg;			// Argument to pass
+						struct __darwin_pthread_handler_rec *__next;
+					};
+	  ptrdiff_t	->	long
+	  rlim_t		->	unsigned long long
+	  sig_atomic_t	->	int
+	  sigset_t	->	unsigned int
+	  size_t		->	unsigned long
+	  ssize_t		->	long
+	  time_t		->	long
+	  uid_t		->	unsigned int
+	  wchar_t		-> 四字节内置类型
+ 
+
