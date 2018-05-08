@@ -125,5 +125,5 @@
 
 ##### 2.3 改写 2-17 中的程序，使其在 sysconf 为 OPEN_MAX 限制返回 LONG_MAX 时，避免进行不必要的处理。
 
-[第二题](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_02/open_max.c)
+[open_max.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_02/open_max.c)
 
