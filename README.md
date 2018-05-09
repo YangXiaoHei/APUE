@@ -137,6 +137,13 @@
 
 ##### 3.2 编写一个与 3.12 节中 dup2 功能相同的函数，要求不调用 fcntl 函数，并且要有正确的出错处理
 
+[my_dup2.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_03/Practise_3_02.c)
 
+* 如果 old 或者 new 中任一超出了最大可分配描述符的范围，返回 -1
+* 如果 old 没有打开，返回 -1，（但 new 可以是关闭的）
+* 如果 old 与 new 相同，则不关闭 new，直接返回 new
+* 如果 new 是打开的，那么关闭 new
+* 使用 dup 复制并记录 0 ~ OPEN_MAX - 1 范围内的所有 fd，直到 dup 的返回值等于 new（因为 new 已经被关闭，所以所有 dup 的返回值都是小于等于 new 并逐渐靠近 new 的）
+* 关闭沿途打开的无意义的 fd
 
 
