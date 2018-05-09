@@ -9,6 +9,8 @@
 
 > ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/1.1.png)
 
+`/` `/.` `/..` 的 i 节点编号都相同均为 2。在文件系统中，i 节点存放文件的绝大部分信息，以及指向数据块的指针。i 节点相同代表文件（目录文件）是同一个，而其他目录下的 `.` 和 `..` i 节点编号均不同，这代表两者是不同的文件（目录文件）。
+
 ##### 1.2 分析图 1-6 程序的输出，说明进程 ID 为 852 和 853 的进程发生了什么情况？
 
 > `UNIX` 是多进程操作系统，在两次运行 `./a.out` 的时间间隔内，有两个程序被操作系统调起成为执行实例，成为占用 CPU 和内存资源的进程，并被内核分配了唯一标识符`进程ID`，分别为 852 和 853。
@@ -95,7 +97,7 @@
 	  dev_t	-> 	int
 	  fd_set	-> 	struct fd_set {
 	    				int fds_bits[32];
-					}
+				}
 	  fpos_t	->	long long
 	  gid_t	->	unsigned int
 	  ino_t	->	unsigned long long
