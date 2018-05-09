@@ -92,18 +92,18 @@ typedef __int8_t int8_t;
  操作系统 : MacBook Pro 10.13.4 High Sierra
 
   clock_t 	-> 	unsigned long
-  pid_t 	-> 	int
-  comp_t	-> 	unsigned short
-  dev_t	-> 	int
-  fd_set	-> 	struct fd_set {
-				int fds_bits[32];
-			}
-  fpos_t	->	long long
-  gid_t	->	unsigned int
-  ino_t	->	unsigned long long
-  mode_t	->	unsigned short
+  pid_t 		-> 	int
+  comp_t		-> 	unsigned short
+  dev_t		-> 	int
+  fd_set		-> 	struct fd_set {
+					int fds_bits[32];
+				}
+  fpos_t		->	long long
+  gid_t		->	unsigned int
+  ino_t		->	unsigned long long
+  mode_t		->	unsigned short
   nlink_t	->	unsigned short
-  off_t	->	long long
+  off_t		->	long long
   pthread_t	->	struct _opaque_pthread_t {
 				long __sig;
 				struct __darwin_pthread_handler_rec  *__cleanup_stack;
@@ -115,13 +115,13 @@ typedef __int8_t int8_t;
 				struct __darwin_pthread_handler_rec *__next;
 			};
   ptrdiff_t		->	long
-  rlim_t		->	unsigned long long
-  sig_atomic_t	->	int
+  rlim_t			->	unsigned long long
+  sig_atomic_t		->	int
   sigset_t		->	unsigned int
-  size_t		->	unsigned long
+  size_t			->	unsigned long
   ssize_t		->	long
-  time_t		->	long
-  uid_t		->	unsigned int
+  time_t			->	long
+  uid_t			->	unsigned int
   wchar_t		-> 	四字节内置类型
 ```
 
@@ -152,6 +152,9 @@ fd1 = open(path, oflags);
 fd2 = dup(fd1);
 fd3 = open(path, oflags);
 ```
-画出类似于 3.9 的结果图，对 fcntl 作用域 fd1 来说， F_SETFD 命令会影响哪一个文件描述符？ F_SETFL 呢？
+##### 画出类似于 3.9 的结果图，对 fcntl 作用于 fd1 来说， F_SETFD 命令会影响哪一个文件描述符？ F_SETFL 呢？
+
+见下图，F_SETFD 作用于 fd1 只影响 fd1，F_SETFL 作用域 fd1 会影响 fd1 和 fd2
+
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/3.3.png)
 
