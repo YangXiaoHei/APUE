@@ -146,6 +146,12 @@
 * 使用 dup 复制并记录 0 ~ OPEN_MAX - 1 范围内的所有 fd，直到 dup 的返回值等于 new（因为 new 已经被关闭，所以所有 dup 的返回值都是小于等于 new 并逐渐靠近 new 的）
 * 关闭沿途打开的无意义的 fd
 
-
-
+##### 3.3 假设一个进程执行下面 3 个函数调用
+```C
+	fd1 = open(path, oflags);
+	fd2 = dup(fd1);
+	fd3 = open(path, oflags);
+```
+画出类似于 3.9 的结果图，对 fcntl 作用域 fd1 来说， F_SETFD 命令会影响哪一个文件描述符？ F_SETFL 呢？
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/3.3.png)
 
