@@ -20,20 +20,25 @@ static int my_dup2(int oldfd, int newfd) {
         log_on = 1;
     }
 
-#define LOG(_msg_) \
+    char buf[1024] = { 0 };
+#define LOG(_fmt_, ...) \
 do {    \
     if (log_on) {   \
-        write(log_fd, _msg_, strlen(_msg_)); \
+        snprintf(buf, sizeof(buf), _fmt_, ##__VA_ARGS__);   \
+        if (buf[strlen(buf) - 1] == '\0') { \
+            buf[strlen(buf) - 1] = '\n';    \
+        }   \
+        write(log_fd, buf, strlen(buf)); \
+        bzero(buf, sizeof(buf));    \
     }   \
 } while (0)
-
 
     /* 校验 fd 是否合法 */
     long open_max = sysconf(_SC_OPEN_MAX);
     if (open_max < 0 || open_max == LONG_MAX) {
         struct rlimit rl;
         if (getrlimit(RLIMIT_NOFILE, &rl) < 0) {
-            LOG("get file limit error\n");
+            LOG("get file limit error");
             exit(1);
         }
         if (rl.rlim_max == RLIM_INFINITY) {
@@ -44,7 +49,7 @@ do {    \
     }
     if ((oldfd < 0 || oldfd >= open_max) ||
         (newfd < 0 || newfd >= open_max)) {
-        LOG("fd  beyond valid range\n");
+        LOG("fd %d or fd %d beyond valid range", oldfd, newfd);
         errno = EBADF;
         return -1;
     }
@@ -52,20 +57,20 @@ do {    \
     /* 如果 oldfd 没有打开，报错 */
     if (fcntl(oldfd, F_GETFD) < 0) {
         errno = EBADF;
-        LOG("oldfd not open\n");
+        LOG("oldfd %d not open", oldfd);
         return -1;
     }
     
     /* 如果相等，直接返回 newfd */
     if (oldfd == newfd) {
-        LOG("oldfd == newfd\n");
+        LOG("oldfd == newfd");
         return newfd;
     }
     
     /* 如果 newfd 是打开的，关闭它 */
     if (fcntl(newfd, F_GETFD) >= 0) {
         if (close(newfd) < 0) {
-            LOG("newfd close fail\n");
+            LOG("newfd %d close fail", newfd);
             return -1;
         }
     }
@@ -75,7 +80,7 @@ do {    \
     int n = 0;
     while (1) {
         if ((fds[n] = dup(oldfd)) < 0) {
-            LOG("oldfd dup fail\n");
+            LOG("oldfd %d dup fail", oldfd);
             return -1;
         }
         if (fds[n] == newfd) {
@@ -86,7 +91,7 @@ do {    \
     /* 关闭沿途打开的所有 fd */
     for (int j = 0; j < n; ++j) {
         if (close(fds[j]) < 0) {
-            LOG("extra dupped fd close fail\n");
+            LOG("extra dupped fd %d close fail", fds[j]);
         }
     }
     free(fds);
