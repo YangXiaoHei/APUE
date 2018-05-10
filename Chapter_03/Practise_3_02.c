@@ -13,7 +13,7 @@ static int my_dup2(int oldfd, int newfd) {
     
     /* 因为可能会重定向标准输出，所以创建一个文件用来打错误日志 */
     int log_on = 0;
-    int log_fd = open(LOG_PATH, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+    int log_fd = open(LOG_PATH, O_CREAT | O_WRONLY | O_APPEND, 0644);
     if (log_fd < 0) {
         printf("my_dup2 log create fail");
     } else {
@@ -21,6 +21,9 @@ static int my_dup2(int oldfd, int newfd) {
     }
 
     char buf[1024] = { 0 };
+#ifdef LOG
+#error "LOG Macro has already be defined!"
+#else
 #define LOG(_fmt_, ...) \
 do {    \
     if (log_on) {   \
@@ -32,6 +35,7 @@ do {    \
         bzero(buf, sizeof(buf));    \
     }   \
 } while (0)
+#endif
 
     /* 校验 fd 是否合法 */
     long open_max = sysconf(_SC_OPEN_MAX);
@@ -95,6 +99,7 @@ do {    \
         }
     }
     free(fds);
+#undef LOG
     return newfd;
 }
 
