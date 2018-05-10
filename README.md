@@ -182,3 +182,4 @@ if (fd > 2)
 
 很明显这是不可能的，因为 `O_APPEND` 标志意味着，每次写操作都会将文件偏移量设置为文件的长度，而且这是一个原子操作，所以在写操作前的 `lseek` 将不
 生效。
+[atomicwrite_vs_lseek.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_03/Practise_3_06.c)
