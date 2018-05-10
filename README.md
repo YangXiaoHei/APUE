@@ -9,7 +9,7 @@
 
 > ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/1.1.png)
 
-`/` `/.` `/..` 的 i 节点编号都相同均为 2。在文件系统中，i 节点存放文件的绝大部分信息，以及指向数据块的指针。i 节点相同代表文件（目录文件）是同一个，而其他目录下的 `.` 和 `..` i 节点编号均不同，这代表两者是不同的文件（目录文件）。
+> `/` `/.` `/..` 的 i 节点编号都相同均为 2。在文件系统中，i 节点存放文件的绝大部分信息，以及指向数据块的指针。i 节点相同代表文件（目录文件）是同一个，而其他目录下的 `.` 和 `..` i 节点编号均不同，这代表两者是不同的文件（目录文件）。
 
 ##### 1.2 分析图 1-6 程序的输出，说明进程 ID 为 852 和 853 的进程发生了什么情况？
 
@@ -157,4 +157,25 @@ fd3 = open(path, oflags);
 > 见下图，F_SETFD 作用于 fd1 只影响 fd1，F_SETFL 作用域 fd1 会影响 fd1 和 fd2
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/3.3.png)
+
+##### 3.4 许多程序中都包含下面一段代码 :
+```C
+dup2(fd, 0);
+dup2(fd, 1);
+dup2(fd, 2);
+if (fd > 2)
+ 	close(fd);
+```
+##### 为了说明 if 语句的必要性，假设 fd 是 1，画出每次调用 dup2 时 3 个文件描述符及相应的文件表项的变化情况。然后再画出 fd 为 3 的情况。
+
+> 见下图，如果 fd 为 1，那么 dup2(fd, 1) 不关闭 1，仅仅将 1 作为返回值，因此最后仅有三个文件描述符指向同一个文件，若 fd 为 3，则最后将有 4 个文件描述符指向同一个文件，然后我们只希望将标准输出，标准输入，标准错误重定向到一个指定文件，不希望能从额外的途径读写该文件，因此关闭多余的文件描述符。
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/3.4.png)
+
+##### 3.5 在 Bourne shell、Bourne-again shell 和 Korn shell 中，digit1>&digit2 表示要将描述符 digit1 重定向至描述符 digit2 的同一文件。请说明下面两条命令的区别。
+
+> 见下图，`./a.out > outfile 2>&1` 先将标准输出重定向至 outfile，再将标准错误重定向到标准输出指向的文件即 outfile，也就是说，最后文件描述符 1 和 2 都指向了 outfile。`./a.out 2>&1 > outfile` 先将标准错误重定向到标准输出，然后再将标准输出重定向到 outfile，也就是说，最后文件描述符 2 指向了标准输出，文件描述符 1 指向了 outfile。
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/3.5.png)
+
 
