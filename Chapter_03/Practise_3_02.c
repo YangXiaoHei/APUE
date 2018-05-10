@@ -5,15 +5,35 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <errno.h>
+#include <string.h>
+
+#define LOG_PATH "./my_dup2.log"
 
 static int my_dup2(int oldfd, int newfd) {
+    
+    /* 因为可能会重定向标准输出，所以创建一个文件用来打错误日志 */
+    int log_on = 0;
+    int log_fd = open(LOG_PATH, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+    if (log_fd < 0) {
+        printf("my_dup2 log create fail");
+    } else {
+        log_on = 1;
+    }
+
+#define LOG(_msg_) \
+do {    \
+    if (log_on) {   \
+        write(log_fd, _msg_, strlen(_msg_)); \
+    }   \
+} while (0)
+
 
     /* 校验 fd 是否合法 */
     long open_max = sysconf(_SC_OPEN_MAX);
     if (open_max < 0 || open_max == LONG_MAX) {
         struct rlimit rl;
         if (getrlimit(RLIMIT_NOFILE, &rl) < 0) {
-            printf("get file limit error");
+            LOG("get file limit error\n");
             exit(1);
         }
         if (rl.rlim_max == RLIM_INFINITY) {
@@ -24,6 +44,7 @@ static int my_dup2(int oldfd, int newfd) {
     }
     if ((oldfd < 0 || oldfd >= open_max) ||
         (newfd < 0 || newfd >= open_max)) {
+        LOG("fd  beyond valid range\n");
         errno = EBADF;
         return -1;
     }
@@ -31,17 +52,20 @@ static int my_dup2(int oldfd, int newfd) {
     /* 如果 oldfd 没有打开，报错 */
     if (fcntl(oldfd, F_GETFD) < 0) {
         errno = EBADF;
+        LOG("oldfd not open\n");
         return -1;
     }
     
     /* 如果相等，直接返回 newfd */
     if (oldfd == newfd) {
+        LOG("oldfd == newfd\n");
         return newfd;
     }
     
     /* 如果 newfd 是打开的，关闭它 */
     if (fcntl(newfd, F_GETFD) >= 0) {
         if (close(newfd) < 0) {
+            LOG("newfd close fail\n");
             return -1;
         }
     }
@@ -51,6 +75,7 @@ static int my_dup2(int oldfd, int newfd) {
     int n = 0;
     while (1) {
         if ((fds[n] = dup(oldfd)) < 0) {
+            LOG("oldfd dup fail\n");
             return -1;
         }
         if (fds[n] == newfd) {
@@ -60,7 +85,9 @@ static int my_dup2(int oldfd, int newfd) {
     }
     /* 关闭沿途打开的所有 fd */
     for (int j = 0; j < n; ++j) {
-        close(fds[j]);
+        if (close(fds[j]) < 0) {
+            LOG("extra dupped fd close fail\n");
+        }
     }
     free(fds);
     return newfd;
