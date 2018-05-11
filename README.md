@@ -198,9 +198,11 @@ if (fd > 2)
 > 如果把当前进程的文件模式创建屏蔽字设置为 777，由该进程所创建的文件将没有任何访问权限位，创建文件时文件拥有者 ID 和文件拥有者所属组 ID 默认是该创建进程的有效用户 ID 和有效组 ID，但即便当前进程有效用户是文件的拥有者，也不能对文件执行任何读、写和执行操作。shell 操作见下图。
 
 > 设置当前 shell 进程的文件模式创建屏蔽字为 777，查看有无修改成功，然后创建文件 `umask_test`，查看该文件的文件模式字，发现为空。
+
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.2.1.png)
 
 > 使用 open 指令打开 `umask_test` 用于 读写，无法打开。使用 vi 打开 `umask_test`，修改后无法保存。
+
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.2.2.png)
 
 
