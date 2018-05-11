@@ -206,3 +206,12 @@ if (fd > 2)
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.2.2.png)
 
 
+##### 4.3 关闭一个你所拥有文件的用户权限，将导致拒绝你访问自己的文件，对此进行验证。
+
+##### 4.4 创建文件 foo 和 bar 后，运行图 4-9 的程序，将会发生什么情况？
+
+> 见下图，foo 和 bar 被截断，但是文件模式字没有发生改变。
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.4.png)
+
+
