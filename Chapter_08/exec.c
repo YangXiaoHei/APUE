@@ -34,6 +34,7 @@ int main() {
         exit(1);
     } else if (pid == 0) {
         
+        /* 增加这一段，增加环境变量 PATH 中的路径前缀*/
         char buf[256] = { 0 };
         char *old = getenv("PATH");
         strncpy(buf, old, strlen(old));
@@ -43,6 +44,7 @@ int main() {
             printf("setenv fail");
             exit(1);
         }
+        /**************************************/
 
         if (execlp("echoall", "echoall", "only 1 arg", (char *)0) < 0) {
             perror("execlp error");
