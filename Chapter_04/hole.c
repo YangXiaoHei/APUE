@@ -12,14 +12,21 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     
-    const char *path_name = argv[1];
+    char alphabet[] = "abc";
+    size_t l = strlen(alphabet);
+    if (atoi(argv[2]) < 2 * l) {
+        printf("[ERROR] 创建的文件太小...\n");
+        exit(1);
+    }
+    
+    const char *prefix = argv[1];
     int nbytes = atoi(argv[2]);
     
     char hole[64] = { 0 };
     char nohole[64] = { 0 };
     
-    sprintf(hole, "hole_%s", path_name);
-    sprintf(nohole, "no_hole_%s", path_name);
+    snprintf(hole, sizeof(hole), "%s_hole", prefix);
+    snprintf(nohole, sizeof(nohole), "%s_no_hole", prefix);
     
     umask(0);
     
@@ -34,22 +41,26 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     
-    char * alphabet = "abcdefghijklmnopqrstuvwxyz";
-    char * p = alphabet;
+    
     int n = nbytes, i = 0;
+    
+    /* 无空洞 */
     while (n--) {
-        if (write(nohfd, p + (i++ % strlen(alphabet)), 1) < 0) {
+        size_t cur = i++ % l;
+        if (write(nohfd, alphabet + cur, 1) != 1) {
             perror("write ");
             exit(1);
         }
     }
     
-    if (write(hfd, alphabet, strlen(alphabet)) < 0) {
+    
+    /* 有空洞 */
+    if (write(hfd, alphabet, l) < 0) {
         perror("write ");
         exit(1);
     }
-    lseek(hfd, nbytes - strlen(alphabet), SEEK_SET);
-    if (write(hfd, alphabet, strlen(alphabet)) < 0) {
+    lseek(hfd, nbytes - 2 * l, SEEK_CUR);
+    if (write(hfd, alphabet, l) < 0) {
         perror("write ");
         exit(1);
     }
