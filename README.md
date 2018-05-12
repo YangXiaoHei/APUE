@@ -174,28 +174,45 @@ if (fd > 2)
 
 ##### 3.5 在 Bourne shell、Bourne-again shell 和 Korn shell 中，digit1>&digit2 表示要将描述符 digit1 重定向至描述符 digit2 的同一文件。请说明下面两条命令的区别。
 
-> 见下图，`./a.out > outfile 2>&1` 先将标准输出重定向至 outfile，再将标准错误重定向到标准输出指向的文件即 outfile，也就是说，最后文件描述符 1 和 2 都指向了 outfile。`./a.out 2>&1 > outfile` 先将标准错误重定向到标准输出，然后再将标准输出重定向到 outfile，也就是说，最后文件描述符 2 指向了标准输出，文件描述符 1 指向了 outfile。
+> 见下图
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/3.5.png)
+
+`./a.out > outfile 2>&1` 等同于如下代码：
+```C
+dup2(outfile_fd, STDOUT_FILENO);  
+dup2(STDOUT_FILENO, STDERR_FILENO);
+```
+> 先将标准输出重定向至 outfile，再将标准错误重定向到标准输出指向的文件即 outfile，也就是说，最后文件描述符 1 和 2 都指向了 outfile。
+
+`./a.out 2>&1 > outfile` 等同于如下代码：
+```C
+dup2(STDOUT_FILENO, STDERR_FILENO);
+dup2(outfile_fd, SSTDOUT_FILENO);
+```
+> 先将标准错误重定向到标准输出，然后再将标准输出重定向到 outfile，也就是说，最后文件描述符 2 指向了标准输出，文件描述符 1 指向了 outfile。
 
 ##### 3.6 如果使用追加标志打开一个文件以便读、写，能否仍用 lseek 在任一位置开始读？能否用 lseek 更新文件中任一部分的数据？请编写一段程序验证。
 
 [atomicwrite_vs_lseek.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_03/Practise_3_06.c)
 
-> 不能，设置 `O_APPEND` 标志意味着，每次写操作都会将文件偏移量设置为文件的长度，设置文件偏移量和写文件是一个不可分割的原子操作，因此，在写操作前的 `lseek` 将不会产生作用。
+> 运行结果如下:
 
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/3.6.png)
+
+> 用追加标志打开一个文件用于读写，仍然可以用 `lseek` 在仍一位置开始读，但不能用 `lseek` 更新文件中的任一部分数据，因为设置 `O_APPEND` 标志意味着每次写操作都会将文件偏移量设置为当前文件的长度，【设置文件偏移量】和【写文件】是一个原子操作，因此，在写操作前的 `lseek` 将不会产生作用。
 
 # Chapter_04
 
 ##### 4.1 用 stat 函数替换图 4-3 程序中的 lstat 函数，如果命令行参数之一是符号链接，会发生什么变化？
 	
-> stat 会追踪符号链接，因此将显示此符号链接指向文件的信息。见下图
+> `stat` 会追踪符号链接，因此将显示此符号链接指向文件的信息。见下图
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.1.png)
 
 ##### 4.2 如果文件模式创建屏蔽字是 777 (八进制)，结果会怎么样？用 shell 的 umask 命令验证该结果。
 
-> 如果把当前进程的文件模式创建屏蔽字设置为 777，由该进程所创建的文件将没有任何访问权限位，创建文件时文件拥有者 ID 和文件拥有者所属组 ID 默认是该创建进程的有效用户 ID 和有效组 ID，但即便当前进程有效用户是文件的拥有者，也不能对文件执行任何读、写和执行操作。shell 操作见下图。
+> 如果把当前进程的文件模式创建屏蔽字设置为 777，由该进程所创建的文件将没有任何访问权限，创建文件时，文件的【文件拥有者 ID】 和【文件拥有者所属组 ID】 默认是该创建进程的有效用户 ID 和有效组 ID，但即便当前进程有效用户是文件的拥有者，也不能对文件执行任何读、写和执行操作。`shell` 操作见下图。
 
 > 设置当前 shell 进程的文件模式创建屏蔽字为 777，查看有无修改成功，然后创建文件 `umask_test`，查看该文件的文件模式字，发现为空。
 
@@ -205,12 +222,19 @@ if (fd > 2)
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.2.2.png)
 
-
 ##### 4.3 关闭一个你所拥有文件的用户权限，将导致拒绝你访问自己的文件，对此进行验证。
+
+> 见下图
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.3.png)
+
+> * 将当前日期输入到 foo 文件（若不存在则创建）
+> * 去掉用户可读权限位
+> * 使用 `cat` 读文件内容，被拒绝。
 
 ##### 4.4 创建文件 foo 和 bar 后，运行图 4-9 的程序，将会发生什么情况？
 
-> 见下图，foo 和 bar 被截断，但是文件模式字没有发生改变。
+> 见下图，`foo` 和 `bar` 被截断，但是文件模式字没有发生改变。
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.4.png)
 
