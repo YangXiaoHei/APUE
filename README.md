@@ -238,4 +238,14 @@ dup2(outfile_fd, SSTDOUT_FILENO);
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.4.png)
 
+##### 4.5 4.12 节中讲到一个普通文件的大小可以是 0，同时我们又知道 st_size 字段是为目录或符号链接定义的，那么目录和符号链接的长度是否可以是 0 ？
+
+> 目录文件和符号链接的长度均不可为 0，目录文件必包括两个 `.` 和 `..` 两个目录项，并且无法删除；符号链接也无法修改其中内容，只能读取。
+
+获取 `st_size` 的代码 [get_size.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_04/Practise_4_05.c)
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.5.png)
+
+
+
 
