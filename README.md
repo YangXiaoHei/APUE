@@ -242,10 +242,28 @@ dup2(outfile_fd, SSTDOUT_FILENO);
 
 > 目录文件和符号链接的长度均不可为 0，目录文件必包括两个 `.` 和 `..` 两个目录项，并且无法删除；符号链接也无法修改其中内容，只能读取。
 
-获取 `st_size` 的代码 [get_size.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_04/Practise_4_05.c)
+> 获取 `st_size` 的代码 [get_size.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_04/Practise_4_05.c)
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.5.png)
 
+##### 4.6 编写一个类似 cp(1) 的程序，它复制包含空洞的文件，但不将字节 0 写到输出文件中去。
 
+[cp.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_04/Practise_4_06.c)
+ 
+> 运行 :
+ 
+> 首先创建带空洞的文件
+ 
+ ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.6.1.png)
 
-
+> 用 `vi` 确认是否带空洞
+ 
+ ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.6.2.png)
+ 
+> 不带空洞地拷贝
+  
+ ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.6.3.png)
+  
+> 确认拷贝后文件不带空洞
+ 
+ ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.6.4.png)
