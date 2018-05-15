@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
         perror("fork");
         exit(1);
     } else if (pid > 0) {
-        if (execl("/bin/date", "date",NULL) < 0) {
+        if (execl("/bin/date", "date", NULL) < 0) {
             printf("execl /bin/date fail\n");
         }
         exit(7);
