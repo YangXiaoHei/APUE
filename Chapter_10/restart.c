@@ -26,13 +26,13 @@ void (*yh_signal(int signo, void (*sig_handler)(int)))(int) {
 }
 
 void sig_user1(int signo) {
-    static unsigned long cnt = 0;
+    static unsigned long cnt = 0;  // 这个静态变量没有加锁保护，肯定是不准的
     printf("[%d] capture SIGUSER1 [seqno = %lu]\n",getpid(), cnt++);
 }
 
 int main(int argc, char *argv[]) {
     
-    if (argc != 3) {
+    if (argc < 3) {
         printf("[COMMAND_LINE_ARGS_ERR] /.restart [src_file] [dst_file]");
         exit(1);
     }
@@ -69,10 +69,6 @@ int main(int argc, char *argv[]) {
         exit(1);
     } else if (pid > 0) {
         
-        /* 注册 SIGUSR1 的捕获函数
-           据 APUE 说，默认的 signal 是自动重启的
-           为了看到不重启的效果，实现了自己的 yh_signal
-         */
         if (signal(SIGUSR1, sig_user1) == SIG_ERR) {
             printf("[SIG_REG_FAIL] signal handler register fail\n");
             exit(1);
@@ -109,11 +105,17 @@ int main(int argc, char *argv[]) {
         printf("child process %d begin to send SIGUSR1\n", getpid());
         
         /* 不停的向父进程发 SIGUSR1 信号 */
-        while (1)
+        for (int i = 0; i < 100000; i++)
             kill(getppid(), SIGUSR1);
+        
+        exit(0);
     }
     
-    /* 不去 wait 子进程，init 会自动领养 */
+    int status;
+    if (wait(&status) < 0) {
+        perror("wait");
+        exit(1);
+    }
     
     e = times(&end);
     
