@@ -7,7 +7,7 @@
 int main(int argc, char *argv[]) {
     if (argc != 3) {
         printf("./a.out ttyname\n");
-        exit(0);
+        exit(1);
     }
     
     int fd = open(argv[1], O_RDWR);    
