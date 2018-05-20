@@ -6,35 +6,32 @@
 #include <string.h>
 #include <pwd.h>
 
+#define WRITE(_msg_) \
+write(STDOUT_FILENO, _msg_"\n", sizeof(_msg_));
+
 static void my_alarm(int signo) {
     static int cnt = 0;
     struct passwd *rootptr;
-    printf("recevied signal %d [seqno = %d]\n", signo, cnt++);
+    WRITE("recv signal");
     if ((rootptr = getpwnam("root")) == NULL) {
-        printf("getpwnam err\n");
+        WRITE("sig_handler getpwnam error");
         exit(1);
     }
-    alarm(1);
 }
 
 
 int main() {
     
     struct passwd *ptr;
-    
-    setbuf(stdout, NULL);
     signal(SIGALRM, my_alarm);
-    
-    alarm(1);
     
     while (1) {
         if ((ptr = getpwnam("root")) == NULL) {
-            printf("getpwnam error");
+            WRITE("getpwnam error");
             exit(1);
         }
         if (strcmp(ptr->pw_name, "root") != 0) {
-            printf("return value corrupted!, pw_name = %s\n",
-                   ptr->pw_name);
+            WRITE("strcmp error");
         }
     }
     
