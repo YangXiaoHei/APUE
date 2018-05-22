@@ -6,6 +6,16 @@
 #include <errno.h>
 #include <sys/wait.h>
 
+void pr_status(int status) {
+    if (WIFEXITED(status)) {
+        printf("normal termination with code : %d\n", WEXITSTATUS(status));
+    } else if (WIFSIGNALED(status)) {
+        printf("signal termination with signo : %d\n", WTERMSIG(status));
+    } else if (WIFSTOPPED(status)) {
+        printf("stop termination with signo : %d\n", WSTOPSIG(status));
+    }
+}
+
 /*
  
  父进程阻塞 SIGCHLD
@@ -44,7 +54,7 @@ int yh_system(const char *cmd) {
         if (sigprocmask(SIG_SETMASK, &old_mask, NULL) < 0) {
             return -1;
         }
-        execl("/bin/bash", "bash", "-c", cmd, (char *)0);
+        execl("/bin/sh", "sh", "-c", cmd, (char *)0);
         _exit(127);
     } else {
         while (waitpid(pid, &status, 0) < 0) {
@@ -54,6 +64,7 @@ int yh_system(const char *cmd) {
             }
         }
     }
+    pr_status(status);
     
     if (sigaction(SIGINT, &save_int_act, NULL) < 0) {
         return -1;
@@ -68,27 +79,15 @@ int yh_system(const char *cmd) {
     return status;
 }
 
-void sig_int(int signo) {
-    printf("\nsig_int signo = %d\n", signo);
-}
-
-void sig_quit(int signo) {
-    printf("\nsig_quit signo = %d\n", signo);
-}
-
 int main(int argc, char *argv[]) {
     
-    setbuf(stdout, NULL);
+    if (argc != 2) {
+        printf("./a.out command args\n");
+        exit(1);
+    }
     
-    if (signal(SIGINT, sig_int) == SIG_ERR) {
-        perror("signal error");
-        exit(1);
-    }
-    if (signal(SIGQUIT, sig_quit) == SIG_ERR) {
-        perror("signal error");
-        exit(1);
-    }
-    if (yh_system("/bin/ed") < 0) {
+    setbuf(stdout, NULL);
+    if (yh_system(argv[1]) < 0) {
         perror("system() error");
         exit(1);
     }
