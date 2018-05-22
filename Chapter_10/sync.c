@@ -10,9 +10,7 @@ static volatile sig_atomic_t sigflag;
 static sigset_t new_mask, old_mask, zero_mask;
 
 static void sig_usr(int signo) {
-    printf("\nmodify sigflag begin\n");
     sigflag = 1;
-    printf("modify sigflag end\n");
 }
 
 void TELL_WAIT(void) {
@@ -29,10 +27,12 @@ void TELL_WAIT(void) {
     sigaddset(&new_mask, SIGUSR1);
     sigaddset(&new_mask, SIGUSR2);
     
-//    if (sigprocmask(SIG_BLOCK, &new_mask, &old_mask) < 0) {
-//        perror("sigprocmask error");
-//        exit(1);
-//    }
+    /***************** 这一段去掉的话会有什么问题 ？ ************/
+    if (sigprocmask(SIG_BLOCK, &new_mask, &old_mask) < 0) {
+        perror("sigprocmask error");
+        exit(1);
+    }
+    /*******************************************************/
 }
 
 void TELL_PARENT(pid_t pid) {
@@ -43,8 +43,7 @@ void WAIT_CHILD(void) {
     while (sigflag == 0)
         sigsuspend(&zero_mask);
     sigflag = 0;
-    
-    if (sigprocmask(SIG_SETMASK, &old_mask, NULL ) < 0) {
+    if (sigprocmask(SIG_SETMASK, &old_mask, NULL) < 0) {
         perror("SIG_SETMASK error");
     }
 }
@@ -54,10 +53,8 @@ void TELL_CHILD(pid_t pid) {
 }
 
 void WAIT_PARENT(void) {
-    printf("\nWAIT_begin\n");
     while (sigflag == 0)
         sigsuspend(&zero_mask);
-    printf("WAIT_end\n");
     sigflag = 0;
     if (sigprocmask(SIG_SETMASK, &old_mask, NULL) < 0) {
         perror("sigprocmask error");
@@ -78,29 +75,18 @@ int main(int argc, char *argv[]) {
         exit(1);
     } else if (pid == 0) {
         WAIT_PARENT();
-        char buf[512];
-        memset(buf, 'A', sizeof(buf));
-        for (int i = 0; i < sizeof(buf); ++i) {
-            if (write(STDOUT_FILENO, buf + i, 1) != 1) {
-                perror("write");
-                exit(1);
-            }
-        }
+        
+        for (int i = 0; i < 512; ++i)
+            printf("A");
+        
         exit(0);
     }
     
-    int i = 0;
-    char buf[512];
-    memset(buf, 'O', sizeof(buf));
-    for (int i = 0; i < sizeof(buf); ++i) {
-        if (write(STDOUT_FILENO, buf + i, 1) != 1) {
-            perror("write");
-            exit(1);
-        }
-    }
-    printf("\n嘻嘻\n");
+    for (int i = 0; i < 512; ++i)
+         printf("O");
+        
     TELL_CHILD(pid);
-    printf("哈哈哈\n");
+    
     int status;
     if (waitpid(pid, &status, 0) < 0) {
         perror("waitpid error");
