@@ -10,15 +10,15 @@
 #include <signal.h>
 
 #ifndef MAX_NAME
-#define MAX_NAME 256
+#define MAX_NAME 1024
 #endif
 
-#define YH_FILE 1
-#define YH_ISDIR 2
-#define YH_STAT_FAIL 3
-#define YH_OPEN_DIR_FAIL 4
-#define YH_MEMORY_FAIL 5
-#define YH_CLOSE_DIR_FAIL 6
+#define YH_FILE             1
+#define YH_ISDIR            2
+#define YH_STAT_FAIL        3
+#define YH_OPEN_DIR_FAIL    4
+#define YH_MEMORY_FAIL      5
+#define YH_CLOSE_DIR_FAIL   6
 
 static size_t max_path_len;
 static char *max_path_buf;
@@ -118,6 +118,7 @@ int myftw(const char *pathname) {
     max_path_buf[strlen(pathname)] = 0;
     int ret = recursivly_go_deep_from(pathname);
     free(max_path_buf);
+    max_path_buf = NULL;
     max_path_len = 0;
     return ret;
 }
