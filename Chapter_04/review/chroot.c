@@ -10,8 +10,13 @@ void yh_ls(DIR *dp) {
     if (dp == NULL)
         return;
     struct dirent *dir_ent;
-    while ((dir_ent = readdir(dp)) != NULL)
+    while ((dir_ent = readdir(dp)) != NULL) {
+        if (strcmp(dir_ent->d_name, "..") == 0 ||
+            strcmp(dir_ent->d_name, ".") == 0 ||
+            dir_ent->d_name[0] == '.')
+            continue;
         printf("%s\n", dir_ent->d_name);
+    }
 }
 
 int main() {
