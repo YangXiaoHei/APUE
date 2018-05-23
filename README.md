@@ -306,15 +306,15 @@ dup2(outfile_fd, SSTDOUT_FILENO);
 
 [yh_ftw.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_04/review/Practise_4_11.c)
 
-> 对书上源代码改进如下：
+> 对书上源代码作如下改进：
 > * 不会在打开目录失败时跳出当前目录层级，而是打印一条错误信息，然后忽略之。
-> * 根据传入的起始路径不同，运行时间可能过长，导致用户不耐烦会按 `Ctrl + C` 中断程序，因此对该 `SIGINT` 信号进行了捕获，在捕获函数中打印当前统计到的信息。
+> * 根据传入的起始路径不同，运行时间可能过长，导致用户不耐烦会按 `Ctrl + C` 中断程序，因此对该 `SIGINT` 信号进行捕获，在捕获函数中打印当前统计到的信息。
 
 > 踩坑如下：
 > * `strncpy(char *dst, const char *src, size_t src_len)` 不会在 `dst` 后自动为你设置一个 `\0`
 > * `strncat(char *dst, const char *src, size_t src_len)` 会自动去找 `dst` 的 `\0`，并且也会在拼接完成后，在 `dst` 的最后为你设置一个 `\0`
-> * 如果当前工作目录为 `/usr/bin`，那么使用 `chdir("bin")` 和 `opendir("bin")` 都会失败。
-> * `lstat` 会自动判断传入路径是相对路径还是绝度路径。
+> * 如果当前工作目录为 `/usr/bin`，那么 `chdir("bin")` 和 `opendir("bin")` 的调用都会失败。
+> * `lstat` 会自动判断传入路径是【相对路径】还是【绝对路径】。
 
 
 
