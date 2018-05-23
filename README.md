@@ -11,15 +11,21 @@
 
 > `/` `/.` `/..` 的 i 节点编号都相同均为 2。在文件系统中，i 节点存放文件的绝大部分信息，以及指向数据块的指针。i 节点相同代表文件（目录文件）是同一个，而其他目录下的 `.` 和 `..` i 节点编号均不同，这代表两者是不同的文件（目录文件）。
 
-##### 1.2 分析图 1-6 程序的输出，说明进程 ID 为 852 和 853 的进程发生了什么情况？
+##### 1.2 分析下图程序输出，说明进程 ID 为 852 和 853 的进程发生了什么情况？
+
+> ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/1.2.png)
 
 > `UNIX` 是多进程操作系统，在两次运行 `./a.out` 的时间间隔内，有两个程序被操作系统调起成为执行实例，成为占用 CPU 和内存资源的进程，并被内核分配了唯一标识符`进程ID`，分别为 852 和 853。
 
-##### 1.3 在 1.7 节中，perror 的参数使用 ISO C 属性 const 定义的，而 strerror 的整形参数没有用此属性定义，为什么
+##### 1.3 下面函数声明中，perror 的参数使用 const，而 strerror 的整形参数没用 const，为什么？
+```C
+void perror(const char *s);
+char *strerror(int errnum);
+```
 
 > `C` 语言函数传参以值传递的方式执行，不论是基本数据类型还是指针，都是值传递。因此都在新调用函数内部被分配了存储空间。只不过，指针是一个地址，可以解引用从而找到指向内容，因此能够在新调用函数内部修改之前函数帧内定义的变量。用 `const` 修饰指针类型的形参，例如 `const T *`， 这代表对调用者承诺，在函数体内部不会修改该指针指向的内容，而只是单纯读它的值。因此在函数返回时，可以预期该指针指向内容没有任何改变，能够在此前提下，使用指针指向内容。而基本数据类型是否被 `const` 修饰无关紧要，因为被调用函数内部使用的是新分配了内存的变量，其上发生的改变不影响先前入栈的函数帧内的同名变量。
 
-##### 1.4 若日历时间存放在带符号的 32 位整形数中，那么到哪一年它将溢出？
+##### 1.4 若从 1970/1/1 00:00:00 开始到现在的总秒数存放在带符号的 32 位整形数中，那么到哪一年它将溢出？
 
 > 32 位有符号 int 的最大值为 2 ^ 31 - 1，因此将在 (2 ^ 31 - 1) / (365 x 24 x 60 x 60) + 1970 = 68 + 1970 = 2038 年溢出。若使用 64 位无符号 int，其最大值为 2 ^ 64 - 1，将会在 (2 ^ 64 - 1) / (365 x 24 x 60 x 60) + 1970 = 292471208677 年溢出，现在是 2018 年，相当于在 2 千 9 百亿年后会溢出。
 
@@ -125,8 +131,9 @@ typedef __int8_t int8_t;
   wchar_t		-> 	四字节内置类型
 ```
 
-##### 2.3 改写 2-17 中的程序，使其在 sysconf 为 OPEN_MAX 限制返回 LONG_MAX 时，避免进行不必要的处理。
-
+##### 2.3 改写下面的程序，使其在 sysconf 为 _SC_OPEN_MAX 限制返回 LONG_MAX 时，避免进行不必要的处理。
+ ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/2.3.1.png)
+ ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/2.3.2.png)
 [open_max.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_02/open_max.c)
 
 # Chapter_03
@@ -135,7 +142,7 @@ typedef __int8_t int8_t;
 
 > `write` 和 `read` 函数是内核的入口，但在内核内部和硬件交互还需要经过内核缓冲区，目的是减少磁盘 I/O 的次数。所谓的无缓冲函数，意思是指在用户进程看来，这两个函数直接发生系统调用，而没有在用户进程中设置任何缓冲数组。
 
-##### 3.2 编写一个与 3.12 节中 dup2 功能相同的函数，要求不调用 fcntl 函数，并且要有正确的出错处理
+##### 3.2 实现 dup2，要求不调用 fcntl 函数，并且要有正确的出错处理
 
 [my_dup2.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_03/Practise_3_02.c)
 
@@ -152,7 +159,7 @@ fd1 = open(path, oflags);
 fd2 = dup(fd1);
 fd3 = open(path, oflags);
 ```
-##### 画出类似于 3.9 的结果图，对 fcntl 作用于 fd1 来说， F_SETFD 命令会影响哪一个文件描述符？ F_SETFL 呢？
+##### 画图说明，对 fcntl 作用于 fd1 来说， F_SETFD 命令会影响哪一个文件描述符？ F_SETFL 呢？
 
 > 见下图，F_SETFD 作用于 fd1 只影响 fd1，F_SETFL 作用域 fd1 会影响 fd1 和 fd2
 
@@ -204,7 +211,7 @@ dup2(outfile_fd, SSTDOUT_FILENO);
 
 # Chapter_04
 
-##### 4.1 用 stat 函数替换图 4-3 程序中的 lstat 函数，如果命令行参数之一是符号链接，会发生什么变化？
+##### 4.1 用 stat 函数替换 lstat 函数，如果命令行参数之一是符号链接，会发生什么变化？
 	
 > `stat` 会追踪符号链接，因此将显示此符号链接指向文件的信息。见下图
 
@@ -232,8 +239,10 @@ dup2(outfile_fd, SSTDOUT_FILENO);
 > * 去掉用户可读权限位
 > * 使用 `cat` 读文件内容，被拒绝。
 
-##### 4.4 创建文件 foo 和 bar 后，运行图 4-9 的程序，将会发生什么情况？
+##### 4.4 创建文件 foo 和 bar 后，运行下图程序，将会发生什么情况？
 
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.4.png)
+ 
 > 见下图，`foo` 和 `bar` 被截断，但是文件模式字没有发生改变。
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.4.png)
@@ -270,12 +279,13 @@ dup2(outfile_fd, SSTDOUT_FILENO);
  
  ##### 4.7 在 4.12 节 ls 命令的输出中，core 和 core.copy 的访问权限不同，如果创建两个文件时 umask 没有变，说明为什么会发生这种差别。
  
- ##### 4.8 运行图 4-16 的程序时，使用了 df(1) 命令来检查空闲的磁盘空间，为什么不使用 du(1) 命令？
- 
+ ##### 4.8 运行下图程序时，使用了 df(1) 命令来检查空闲的磁盘空间，为什么不使用 du(1) 命令？
+  ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.8.1.png)
+  ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.8.2.png)
 > du 命令搜索所有已存在的文件，并将这些文件的和累计。若一个文件，在 `unlink` 后而进程对其的访问没有结束，它虽然被删除，但占用的磁盘空间仍然存在，然而此时，它未归还的空间不能被 du 命令统计到。df 命令则能够 “看到” 虽然已经被删除，但是占用空间还没有释放的文件，它的计算值中包括这一些未释放空间的删除文件，所以要使用 df 命令。
 
-##### 4.9 图 4-20 中显示 unlink 函数会修改文件状态更改时间，这是怎样发生的？
-
+##### 4.9 下图显示 unlink 函数会修改文件状态更改时间，这是怎样发生的？
+ ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.9.png)
 > 在 `struct stat` 结构体中有一个 `st_nlink` 字段记录了当前 i 节点被多少个目录项引用，这个值是保存在 i 节点中的。当调用 `unlink` 时会修改该字段，也就修改了 i 节点的信息。所以这反应在了文件状态时间更改上。
 
 
