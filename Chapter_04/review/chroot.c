@@ -4,6 +4,15 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
+#include <dirent.h>
+
+void yh_ls(DIR *dp) {
+    if (dp == NULL)
+        return;
+    struct dirent *dir_ent;
+    while ((dir_ent = readdir(dp)) != NULL)
+        printf("%s\n", dir_ent->d_name);
+}
 
 int main() {
     
@@ -36,7 +45,15 @@ int main() {
     chdir(".."); // 回到 2
 
     char buf[1024] = { 0 };
-    printf("current process directory : %s\n", getcwd(buf, sizeof(buf)));
+    printf("---------------------------------------------\n"
+           "current process directory : %s\n"
+           "---------------------------------------------\n", getcwd(buf, sizeof(buf)));
+    
+    DIR *dp = opendir("/");
+    if (dp != NULL) {
+        yh_ls(dp);
+        closedir(dp);
+    }
     
     if (chroot(buf) < 0) {
         perror("chroot error");
@@ -45,7 +62,15 @@ int main() {
     }
     
     bzero(buf, sizeof(buf));
-    printf("current process directory : %s\n", getcwd(buf, sizeof(buf)));
+    printf("---------------------------------------------\n"
+           "current process directory : %s\n"
+           "---------------------------------------------\n", getcwd(buf, sizeof(buf)));
+    
+    dp = opendir("/");
+    if (dp != NULL) {
+        yh_ls(dp);
+        closedir(dp);
+    }
     
     return 0;
 }
