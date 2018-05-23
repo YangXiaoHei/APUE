@@ -304,7 +304,17 @@ dup2(outfile_fd, SSTDOUT_FILENO);
 
 ####  4.10  在 4.22 节中 myftw 从不改变其目录，对这种处理方法进行改动 ：每次遇到一个目录就调用其 chdir，这样每次调用 lstat 时就可以使用文件名而非路径名，处理完所有的目录项后执行 chdir("..")。比较这种版本的程序和书中程序的运行时间。
 
+[yh_ftw.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_04/review/Practise_4_11.c)
 
+> 对书上源代码改进如下：
+> * 不会在打开目录失败时跳出当前目录层级，而是打印一条错误信息，然后忽略之。
+> * 根据传入的起始路径不同，运行时间可能过长，导致用户不耐烦会按 `Ctrl + C` 中断程序，因此对该 `SIGINT` 信号进行了捕获，在捕获函数中打印当前统计到的信息。
+
+> 踩坑如下：
+> * `strncpy(char *dst, const char *src, size_t src_len)` 不会在 `dst` 后自动为你设置一个 `\0`
+> * `strncat(char *dst, const char *src, size_t src_len)` 会自动去找 `dst` 的 `\0`，并且也会在拼接完成后，在 `dst` 的最后为你设置一个 `\0`
+> * 如果当前工作目录为 `/usr/bin`，那么使用 `chdir("bin")` 和 `opendir("bin")` 都会失败。
+> * `lstat` 会自动判断传入路径是相对路径还是绝度路径。
 
 
 
