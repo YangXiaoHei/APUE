@@ -13,7 +13,7 @@
 
 ##### 1.2 分析下图程序输出，说明进程 ID 为 852 和 853 的进程发生了什么情况？
 
-> ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/1.2.png)
+ ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/1.2.jpg)
 
 > `UNIX` 是多进程操作系统，在两次运行 `./a.out` 的时间间隔内，有两个程序被操作系统调起成为执行实例，成为占用 CPU 和内存资源的进程，并被内核分配了唯一标识符`进程ID`，分别为 852 和 853。
 
@@ -132,8 +132,10 @@ typedef __int8_t int8_t;
 ```
 
 ##### 2.3 改写下面的程序，使其在 sysconf 为 _SC_OPEN_MAX 限制返回 LONG_MAX 时，避免进行不必要的处理。
- ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/2.3.1.png)
- ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/2.3.2.png)
+
+ ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/2.3.1.jpg)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/2.3.2.jpg)
+
 [open_max.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_02/open_max.c)
 
 # Chapter_03
@@ -241,11 +243,11 @@ dup2(outfile_fd, SSTDOUT_FILENO);
 
 ##### 4.4 创建文件 foo 和 bar 后，运行下图程序，将会发生什么情况？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.4.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.4.1.jpg)
  
 > 见下图，`foo` 和 `bar` 被截断，但是文件模式字没有发生改变。
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.4.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.4.2.png)
 
 ##### 4.5 4.12 节中讲到一个普通文件的大小可以是 0，同时我们又知道 st_size 字段是为目录或符号链接定义的，那么目录和符号链接的长度是否可以是 0 ？
 
@@ -280,12 +282,16 @@ dup2(outfile_fd, SSTDOUT_FILENO);
  ##### 4.7 在 4.12 节 ls 命令的输出中，core 和 core.copy 的访问权限不同，如果创建两个文件时 umask 没有变，说明为什么会发生这种差别。
  
  ##### 4.8 运行下图程序时，使用了 df(1) 命令来检查空闲的磁盘空间，为什么不使用 du(1) 命令？
-  ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.8.1.png)
-  ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.8.2.png)
+ 
+  ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.8.1.jpg)
+  ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.8.2.jpg)
+  
 > du 命令搜索所有已存在的文件，并将这些文件的和累计。若一个文件，在 `unlink` 后而进程对其的访问没有结束，它虽然被删除，但占用的磁盘空间仍然存在，然而此时，它未归还的空间不能被 du 命令统计到。df 命令则能够 “看到” 虽然已经被删除，但是占用空间还没有释放的文件，它的计算值中包括这一些未释放空间的删除文件，所以要使用 df 命令。
 
 ##### 4.9 下图显示 unlink 函数会修改文件状态更改时间，这是怎样发生的？
- ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.9.png)
+
+ ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.9.jpg)
+ 
 > 在 `struct stat` 结构体中有一个 `st_nlink` 字段记录了当前 i 节点被多少个目录项引用，这个值是保存在 i 节点中的。当调用 `unlink` 时会修改该字段，也就修改了 i 节点的信息。所以这反应在了文件状态时间更改上。
 
 
