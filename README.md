@@ -17,7 +17,7 @@
 
 > `UNIX` 是多进程操作系统，在两次运行 `./a.out` 的时间间隔内，有两个程序被操作系统调起成为执行实例，成为占用 CPU 和内存资源的进程，并被内核分配了唯一标识符`进程ID`，分别为 852 和 853。
 
-#### 1.3 下面函数声明中，perror 的参数使用 const，而 strerror 的整形参数没用 const，为什么？
+#### 1.3  下面函数声明中，perror 的参数使用 const，而 strerror 的整形参数没用 const，为什么？
 ```C
 void perror(const char *s);
 char *strerror(int errnum);
@@ -25,12 +25,12 @@ char *strerror(int errnum);
 
 > `C` 语言函数传参以值传递的方式执行，不论是基本数据类型还是指针，都是值传递。因此都在新调用函数内部被分配了存储空间。只不过，指针是一个地址，可以解引用从而找到指向内容，因此能够在新调用函数内部修改之前函数帧内定义的变量。用 `const` 修饰指针类型的形参，例如 `const T *`， 这代表对调用者承诺，在函数体内部不会修改该指针指向的内容，而只是单纯读它的值。因此在函数返回时，可以预期该指针指向内容没有任何改变，能够在此前提下，使用指针指向内容。而基本数据类型是否被 `const` 修饰无关紧要，因为被调用函数内部使用的是新分配了内存的变量，其上发生的改变不影响先前入栈的函数帧内的同名变量。
 
-#### 1.4 若从 1970/1/1 00:00:00 开始到现在的总秒数存放在带符号的 32 位整形数中，那么到哪一年它将溢出？
+#### 1.4  若从 1970/1/1 00:00:00 开始到现在的总秒数存放在带符号的 32 位整形数中，那么到哪一年它将溢出？
 
 > 32 位有符号 int 的最大值为 2 ^ 31 - 1，因此将在 (2 ^ 31 - 1) / (365 x 24 x 60 x 60) + 1970 = 68 + 1970 = 2038 年溢出。若使用 64 位无符号 int，其最大值为 2 ^ 64 - 1，将会在 (2 ^ 64 - 1) / (365 x 24 x 60 x 60) + 1970 = 292471208677 年溢出，现在是 2018 年，相当于在 2 千 9 百亿年后会溢出。
 
 
-#### 1.5 若进程时间存放在带符号的 32 位整形数中，而且每秒为 100 时钟滴答，那么经过多少天后该时间将会溢出 ？ 
+#### 1.5  若进程时间存放在带符号的 32 位整形数中，而且每秒为 100 时钟滴答，那么经过多少天后该时间将会溢出 ？ 
 
 > 32 位有符号 int 的最大值为 2 ^ 31 - 1 = 2147483647，因此总共是 21474836 秒，合计 248 天
 
@@ -131,7 +131,7 @@ typedef __int8_t int8_t;
   wchar_t		-> 	四字节内置类型
 ```
 
-#### 2.3 改写下面的程序，使其在 sysconf 为 _SC_OPEN_MAX 限制返回 LONG_MAX 时，避免进行不必要的处理。
+#### 2.3  改写下面的程序，使其在 sysconf 为 _SC_OPEN_MAX 限制返回 LONG_MAX 时，避免进行不必要的处理。
 
  ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/2.3.1.jpg)
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/2.3.2.jpg)
@@ -140,11 +140,11 @@ typedef __int8_t int8_t;
 
 # Chapter_03
 
-#### 3.1 当读/写磁盘文件时，本章中描述的函数确实是不带缓冲机制的吗？请说明原因。
+#### 3.1  当读/写磁盘文件时，本章中描述的函数确实是不带缓冲机制的吗？请说明原因。
 
 > `write` 和 `read` 函数是内核的入口，但在内核内部和硬件交互还需要经过内核缓冲区，目的是减少磁盘 I/O 的次数。所谓的无缓冲函数，意思是指在用户进程看来，这两个函数直接发生系统调用，而没有在用户进程中设置任何缓冲数组。
 
-#### 3.2 实现 dup2，要求不调用 fcntl 函数，并且要有正确的出错处理
+#### 3.2  实现 dup2，要求不调用 fcntl 函数，并且要有正确的出错处理
 
 [my_dup2.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_03/Practise_3_02.c)
 
@@ -155,7 +155,7 @@ typedef __int8_t int8_t;
 > * 使用 dup 复制并记录 0 ~ OPEN_MAX - 1 范围内的所有 fd，直到 dup 的返回值等于 new（因为 new 已经被关闭，所以所有 dup 的返回值都是小于等于 new 并逐渐靠近 new 的）
 > * 关闭沿途打开的无意义的 fd
 
-#### 3.3 假设一个进程执行下面 3 个函数调用
+#### 3.3  假设一个进程执行下面 3 个函数调用
 ```C
 fd1 = open(path, oflags);
 fd2 = dup(fd1);
@@ -167,7 +167,7 @@ fd3 = open(path, oflags);
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/3.3.png)
 
-#### 3.4 许多程序中都包含下面一段代码 :
+#### 3.4  许多程序中都包含下面一段代码 :
 ```C
 dup2(fd, 0);
 dup2(fd, 1);
@@ -181,7 +181,7 @@ if (fd > 2)
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/3.4.png)
 
-#### 3.5 在 Bourne shell、Bourne-again shell 和 Korn shell 中，digit1>&digit2 表示要将描述符 digit1 重定向至描述符 digit2 的同一文件。请说明下面两条命令的区别。
+#### 3.5  在 Bourne shell、Bourne-again shell 和 Korn shell 中，digit1>&digit2 表示要将描述符 digit1 重定向至描述符 digit2 的同一文件。请说明下面两条命令的区别。
 
 > 见下图
 
@@ -201,7 +201,7 @@ dup2(outfile_fd, SSTDOUT_FILENO);
 ```
 > 先将标准错误重定向到标准输出，然后再将标准输出重定向到 outfile，也就是说，最后文件描述符 2 指向了标准输出，文件描述符 1 指向了 outfile。
 
-####  3.6 如果使用追加标志打开一个文件以便读、写，能否仍用 lseek 在任一位置开始读？能否用 lseek 更新文件中任一部分的数据？请编写一段程序验证。
+####  3.6  如果使用追加标志打开一个文件以便读、写，能否仍用 lseek 在任一位置开始读？能否用 lseek 更新文件中任一部分的数据？请编写一段程序验证。
 
 [atomicwrite_vs_lseek.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_03/Practise_3_06.c)
 
@@ -213,13 +213,13 @@ dup2(outfile_fd, SSTDOUT_FILENO);
 
 # Chapter_04
 
-#### 4.1 用 stat 函数替换 lstat 函数，如果命令行参数之一是符号链接，会发生什么变化？
+#### 4.1  用 stat 函数替换 lstat 函数，如果命令行参数之一是符号链接，会发生什么变化？
 	
 > `stat` 会追踪符号链接，因此将显示此符号链接指向文件的信息。见下图
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.1.png)
 
-#### 4.2 如果文件模式创建屏蔽字是 777 (八进制)，结果会怎么样？用 shell 的 umask 命令验证该结果。
+#### 4.2  如果文件模式创建屏蔽字是 777 (八进制)，结果会怎么样？用 shell 的 umask 命令验证该结果。
 
 > 如果把当前进程的文件模式创建屏蔽字设置为 777，由该进程所创建的文件将没有任何访问权限，创建文件时，文件的【文件拥有者 ID】 和【文件拥有者所属组 ID】 默认是该创建进程的有效用户 ID 和有效组 ID，但即便当前进程有效用户是文件的拥有者，也不能对文件执行任何读、写和执行操作。`shell` 操作见下图。
 
@@ -231,7 +231,7 @@ dup2(outfile_fd, SSTDOUT_FILENO);
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.2.2.png)
 
-#### 4.3 关闭一个你所拥有文件的用户权限，将导致拒绝你访问自己的文件，对此进行验证。
+#### 4.3  关闭一个你所拥有文件的用户权限，将导致拒绝你访问自己的文件，对此进行验证。
 
 > 见下图
 
@@ -241,7 +241,7 @@ dup2(outfile_fd, SSTDOUT_FILENO);
 > * 去掉用户可读权限位
 > * 使用 `cat` 读文件内容，被拒绝。
 
-#### 4.4 创建文件 foo 和 bar 后，运行下图程序，将会发生什么情况？
+#### 4.4  创建文件 foo 和 bar 后，运行下图程序，将会发生什么情况？
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.4.1.jpg)
  
@@ -249,7 +249,7 @@ dup2(outfile_fd, SSTDOUT_FILENO);
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.4.2.png)
 
-####  4.5 4.12 节中讲到一个普通文件的大小可以是 0，同时我们又知道 st_size 字段是为目录或符号链接定义的，那么目录和符号链接的长度是否可以是 0 ？
+####  4.5  4.12 节中讲到一个普通文件的大小可以是 0，同时我们又知道 st_size 字段是为目录或符号链接定义的，那么目录和符号链接的长度是否可以是 0 ？
 
 > 目录文件和符号链接的长度均不可为 0，目录文件必包括两个 `.` 和 `..` 两个目录项，并且无法删除；符号链接也无法修改其中内容，只能读取。
 
@@ -257,7 +257,7 @@ dup2(outfile_fd, SSTDOUT_FILENO);
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.5.png)
 
-####  4.6 编写一个类似 cp(1) 的程序，它复制包含空洞的文件，但不将字节 0 写到输出文件中去。
+####  4.6  编写一个类似 cp(1) 的程序，它复制包含空洞的文件，但不将字节 0 写到输出文件中去。
 
 > 创建空洞文件和不带空洞拷贝代码 : [nohole_cp.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_04/Practise_4_06.c)
  
@@ -279,13 +279,13 @@ dup2(outfile_fd, SSTDOUT_FILENO);
  
  ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.6.4.png)
  
- ####  4.7 在 4.12 节 ls 命令的输出中，core 和 core.copy 的访问权限不同，如果创建两个文件时 umask 没有变，说明为什么会发生这种差别。
+ ####  4.7  在 4.12 节 ls 命令的输出中，core 和 core.copy 的访问权限不同，如果创建两个文件时 umask 没有变，说明为什么会发生这种差别。
  
   ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.7.jpg)
   
  > core 文件是由内核创建的，因此内核在创建该文件时使用了自己设置的权限位，该权限位可能会也可能不会被当前的 shell 进程的 umask 值改变。 core.copy 是由当前的 shell 进程的子进程创建的，创建时使用了自己设置的权限位，该权限位一定会被 shell 进程的子进程的 umask 值改变（子进程会继承父进程的 umask）。
  
- ####  4.8 运行下图程序时，使用了 df(1) 命令来检查空闲的磁盘空间，为什么不使用 du(1) 命令？
+ ####  4.8  运行下图程序时，使用了 df(1) 命令来检查空闲的磁盘空间，为什么不使用 du(1) 命令？
  
   ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.8.1.jpg)
   ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.8.2.jpg)
@@ -298,7 +298,7 @@ dup2(outfile_fd, SSTDOUT_FILENO);
  
 > 在 `struct stat` 结构体中有一个 `st_nlink` 字段记录了当前 i 节点被多少个目录项引用，这个值是保存在 i 节点中的。当调用 `unlink` 时会修改该字段，也就修改了 i 节点的信息。所以这反应在了文件状态时间更改上。
 
-####  4.10 系统对可打开文件数目的限制对 myftw 函数会产生什么影响？
+####  4.10  系统对可打开文件数目的限制对 myftw 函数会产生什么影响？
 
 > `myftw` 在每次遇到目录文件时将其打开，遍历其中的目录项，如果在遍历时碰到目录文件，再从此目录文件中遍历读取目录项。因此，设最外层目录文件深度为 1，它的目录项深度为 2。可以得知，层次为 1 的目录文件在整个函数执行过程中始终保持被打开状态，它需要在第 2 层所有目录项都处理完毕后，才能被关闭。进一步推想，层次为 3 的目录文件直到层次为 4 的目录项都被处理完毕后才能被关闭，层次 5 直到层次 6 处理完后才能被关闭。因此，可打开文件的最大数目会限制 `myftw` 的递归深度。如果超过了最大可打开文件数目的限制，可以想象到 `opendir` 会失败，无法递归到更深一层，同时进程栈的大小限制同样会约束 `myftw` 的递归深度，函数帧连续入栈直到超出栈容量限制则内核向进程递送 `SIGSEGV` 信号表示非法内存引用（栈溢出）错误。
 
@@ -337,13 +337,21 @@ dup2(outfile_fd, SSTDOUT_FILENO);
 
 ####  4.15  用 cpio(1) 和 tar(1) 命令检查档案文件的格式。3 个可能的时间值中哪几个是为每一个文件保存的？你认为文件复原时，文件的访问时间是什么？为什么？
 
-####  4.16  UNIX 系统对目录树的深度有限制吗？编写一个程序循环，在每次循环中，创建目录，并将该目录更改为工作目录。确保叶节点的绝对路径名大于系统的 PATH_MAX 限制。可以调用 getcwd 得到目录的路径名吗？标准 UNIX 系统工具是如何处理长路径名？对目录可以使用 tar 或 cpio 命令归档吗？
+####  4.16  UNIX 系统对目录树的深度有限制吗？编写一个程序循环，在每次循环中，创建目录，并将该目录更改为工作目录。确保叶节点的绝对路径名大于系统的 PATH_MAX 限制。可以调用 getcwd 得到目录的路径名吗？标准 UNIX 系统工具是如何处理长路径名？对目录可以使用 tar 或 cpio 命令归档吗？
 
+> [max_path_text.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_04/review/max_path.c)
+
+> UNIX 系统对目录树的深度没有限制，但是路径名如果长于 `PATH_MAX` 的限制，则 `getcwd()` 命令会失败。
  
-####  4.17 3.16 节中描述了 /dev/fd 特征。如果每个用户都可以访问这些文件，则其访问权限必须为 rw-rw-rw。有些程序创建输出文件时，先删除该文件以确保该文件名不存在，忽略返回码。
+####  4.17  3.16 节中描述了 /dev/fd 特征。如果每个用户都可以访问这些文件，则其访问权限必须为 rw-rw-rw。有些程序创建输出文件时，先删除该文件以确保该文件名不存在，忽略返回码。
 ```C
 unlink(path);
 if ((fd = creat(path, FILE_MODE)) < 0)
 	err_sys(...)
 ```
 #### 如果 path 是 /dev/fd/1，会出现什么情况？
+
+> 在目录中创建文件需要对目录有写权限和执行权限，删除亦然。
+> 从下图可以看出，`/dev` 目录的用户写权限被关闭，这意味着除非是超级用户，否则无法在 `/dev` 目录下进行删除文件或者创建文件操作。
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.17.png)
