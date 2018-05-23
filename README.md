@@ -281,6 +281,10 @@ dup2(outfile_fd, SSTDOUT_FILENO);
  
  ##### 4.7 在 4.12 节 ls 命令的输出中，core 和 core.copy 的访问权限不同，如果创建两个文件时 umask 没有变，说明为什么会发生这种差别。
  
+  ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.7.jpg)
+  
+ > core 文件是由内核创建的，因此内核在创建该文件时使用了自己设置的权限位，该权限位可能会也可能不会被当前的 shell 进程的 umask 值改变。 core.copy 是由当前的 shell 进程的子进程创建的，创建时使用了自己设置的权限位，该权限位一定会被 shell 进程的子进程的 umask 值改变（子进程会继承父进程的 umask）。
+ 
  ##### 4.8 运行下图程序时，使用了 df(1) 命令来检查空闲的磁盘空间，为什么不使用 du(1) 命令？
  
   ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.8.1.jpg)
@@ -293,6 +297,10 @@ dup2(outfile_fd, SSTDOUT_FILENO);
  ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.9.jpg)
  
 > 在 `struct stat` 结构体中有一个 `st_nlink` 字段记录了当前 i 节点被多少个目录项引用，这个值是保存在 i 节点中的。当调用 `unlink` 时会修改该字段，也就修改了 i 节点的信息。所以这反应在了文件状态时间更改上。
+
+##### 4.9 4.22 节中，系统对可打开文件数目的限制对 myftw 函数会产生什么影响？
+##### 4.10 在 4.22 节中 myftw 从不改变其目录，对这种处理方法进行改动 ：每次遇到一个目录就调用其 chdir，这样每次调用 lstat 时就可以使用文件名而非路径名，处理完所有的目录项后执行 chdir("..")。比较这种版本的程序和书中程序的运行时间。
+
 
 
 
