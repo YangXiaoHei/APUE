@@ -316,6 +316,15 @@ dup2(outfile_fd, SSTDOUT_FILENO);
 > * 如果当前工作目录为 `/usr/bin`，那么 `chdir("bin")` 和 `opendir("bin")` 的调用都会失败。
 > * `lstat` 会自动判断传入路径是【相对路径】还是【绝对路径】。
 
+####  4.10  每个进程都有一个根目录用于解析绝对路径名，可以通过 chroot 函数改变根目录。在手册中查阅此函数。说明这个函数什么时候有用。
 
+> [chroot_test.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_04/review/chroot.c)
+
+> 这份代码在当前工作目录下创建一个目录树。然后打印根目录下的目录文件，之后调用 `chroot` 函数，再打印一遍根目录下的目录文件。下图是执行结果：
+
+ ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.12.png)
+ 
+ > 利用 `chroot` 可以将某个目录作为新的根目录，就可以阻止用户访问此目录以外的文件。
+ > 要注意只有超级用户特权才能够使用 `chroot`，所以在执行时使用 `sudo ./chroot`。并且若一个进程更改了根目录，那么该进程及其后代进程就再也不能恢复至原来的根。
 
  
