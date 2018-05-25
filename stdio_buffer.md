@@ -2,7 +2,7 @@
 
 ## 一，前言
 
-标准 I/O 库指的是 `printf`，`scanf`, `sprintf` 等库函数。其中有的是带缓冲的，有的则不带缓冲。一个简单的规律总结如下，如果函数需要一个数组作为参数，那么它不带缓冲，即不会改变标准 I/O 库的缓冲区。比如 `sprintf`。如果函数不需要数组作为参数，那么它是带缓冲的，即会改变标准 I/O 库的缓冲区，比如 `printf`。
+标准 `I/O` 库指的是 `printf`，`scanf`, `sprintf` 等库函数。其中有的是带缓冲的，有的则不带缓冲。一个简单的规律总结如下，如果函数需要一个数组作为参数，那么它不带缓冲，即不会改变标准 `I/O` 库的缓冲区。比如 `sprintf`。如果函数不需要数组作为参数，那么它是带缓冲的，即会改变标准 `I/O` 库的缓冲区，比如 `printf`。
 
 ## 二，实验
 
@@ -70,33 +70,33 @@ OK，准备工作完毕，我们开始吧。
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.1.def_buf.png)
 
-答案 ：什么都不输出。
+***答案*** ：无。
 
-解释 ：链接到终端的标准 I/O 库默认是行缓冲的，行缓冲意味着只有当遇到字符串的 '\n' 才会刷清缓冲区，调用一次 `write`，将数据写入到标准输出。
+***解释*** ：链接到终端的标准 `I/O` 库默认是行缓冲的，行缓冲意味着只有当遇到字符串的 `'\n'` 才会刷清缓冲区，调用一次 `write`，将数据写入到标准输出。
 
 #### 2.2 下面的代码将在屏幕上输出什么？
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.2.def_buf.png)
 
-答案 ：输出 hello world（回车换行）
+***答案*** ： hello world（回车换行）
 
-解释 ：按照 `1.1` 的说法，行缓冲遇到 `\n` 刷清缓冲区，因此此处将 `hello world\n` 写入到标准输出。
+***解释*** ：按照 `1.1` 的说法，行缓冲遇到 `\n` 刷清缓冲区，因此此处将 `hello world\n` 写入到标准输出。
 
 #### 2.3 下面代码将在屏幕上输出什么？
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.3.def_buf.png)
 
-答案 ：输出 hello world
+答案 ：hello world
 
-解释 ：exit() 的工作流程中，最后一步会调用 `fclose(stdout)`清刷缓冲区，这造成输出缓冲区中所有数据都写到标准输出，而 _exit() 则不会清刷缓冲区。
+解释 ：`exit()` 的工作流程中，最后一步会调用 `fclose(stdout)` 清刷缓冲区，这造成输出缓冲区中所有数据都写到标准输出，而 `_exit()` 则不会清刷缓冲区。
 
 #### 2.4 下面代码将在屏幕上输出什么？
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.4.def_buf.png)
 
-答案 ：输出 hello world
+***答案*** ：hello world
 
-解释 ：return 0 等价于 exit(0)
+***解释*** ：`return 0` 等价于 `exit(0)`
 
 -
 ### 验证
@@ -109,30 +109,31 @@ OK，准备工作完毕，我们开始吧。
  
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.verify.png)
  
-执行结果 :
+### 执行结果 :
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.verify_result.png)
  
- 从中可以看出下列两点信息：
+ > 从中可以看出下列两点信息：
  
- 1. 第一次调用 `printf` 前，缓冲区都没有分配内存。
- 2. 在调用 `printf` 后，缓冲区被初始化，标准 I/O 库将缓冲区类型设置为行缓冲，并且缓冲区大小是 4096 字节。
+ > 1. 第一次调用 `printf` 前，缓冲区都没有分配内存。
+ 
+ > 2. 在调用 `printf` 后，缓冲区被初始化，标准 I/O 库将缓冲区类型设置为行缓冲，并且缓冲区大小是 4096 字节。
 
 #### 2.5 下面的代码将在屏幕上输出什么
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.5.def_buf.png)
 
-答案 ：4096 个 'a'
+***答案*** ：4096 个 'a'
 
-原因 ：虽然是行缓冲区，但是只要写入字节数大于等于缓冲区容量，就会发生一次系统调用 `write`。
+***原因*** ：虽然是行缓冲区，但是只要写入字节数大于等于缓冲区容量，就会发生一次系统调用 `write`。
 
 #### 2.6 下面的代码将在屏幕上输出什么
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.6.def_buf.png)
 
-答案 ：什么都不输出
+***答案*** ：无
 
-原因 ：行缓冲区大小默认为 4096 个字节，写入缓冲区的数据即没有达到缓冲区容量限制，也没有遇到 '\n'，不会发生系统调用 write。
+***原因*** ：行缓冲区大小默认为 `4096` 个字节，写入缓冲区的数据即没有达到缓冲区容量限制，也没有遇到 `'\n'`，不会发生系统调用 `write`。
 
 ### 3，自定义缓冲
 
@@ -152,44 +153,44 @@ mode 的取值有 `_IONBF`，`_IOLBF`，`_IOFBF`，分别代表无缓冲区，�
 答案 ：hello world
 原因 ：`setbuf` 将输出缓冲区设置为无缓冲，即每次调用 `printf` 都对应一次系统调用 `write`
 
-验证 
+### 验证 
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.1.verify.png)
 
-验证结果
+### 验证结果
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.1.verify_result.png)
 
-从验证结果可以看出，调用 `setbuf(stdout, NULL)` 后，输出缓冲区被设置为无缓冲（其实是有 1 个字节大小的缓冲区，只不过每次写一个字符，缓冲区容量就满了），于是每次调用 printf(msg) 都发生了 strlen(msg) 次系统调用 `write`
+从验证结果可以看出，调用 `setbuf(stdout, NULL)` 后，输出缓冲区被设置为无缓冲（其实是有 `1` 个字节大小的缓冲区，只不过每次写一个字符，缓冲区容量就满了），于是每次调用 `printf(msg)` 都发生了 `strlen(msg)` 次系统调用 `write`
 
 #### 3.2 下面的代码将输出什么？
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.2.diy_buf.png)
 
-答案 ：什么都不输出
-原因 ：`setbuf` 将输出缓冲区设置为 12 个字节，即每次写入满或者超过 12 个字节才发生一次系统调用 `write`，而 `hello world` 只有 11 个字节。
+***答案*** ：无
+***原因*** ：`setbuf` 将输出缓冲区设置为 `12` 个字节，即每次写入满或者超过 `12` 个字节才发生一次系统调用 `write`，而 `hello world` 只有 `11` 个字节。
 
 #### 3.3 下面的代码将输出什么？
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.3.diy_buf.png)
 
-答案 ：什么都不输出
+***答案*** ：什么都不输出
 
-原因 ：`setbuf` 将输出缓冲区设置为 12 个字节，即每次写入满或者超过 12 个字节才发生一次系统调用 `write`，而 `hello worl\n` 只有 11 个字节，`setbuf` 不会将缓冲区类型设置为行缓冲，因此 '\n' 没效果。
+***原因*** ：`setbuf` 将输出缓冲区设置为 `12` 个字节，即每次写入满或者超过 `12` 个字节才发生一次系统调用 `write`，而 `hello worl\n` 只有 `11` 个字节，`setbuf` 不会将缓冲区类型设置为行缓冲，因此 `'\n'` 没效果。
 
-验证 
+#### 验证 
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.3.verify.png)
 
-验证结果
+#### 验证结果
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.3.verify_result.png)
 
 #### 3.4 下面的代码将输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.4.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.4.diy_buf.png)
 
-答案 ： hello worl
-原因 ：`setvbuf` 将输出缓冲区设置为 12 个字节，并将缓冲区类型设置为行缓冲，即每次写入满或者超过 12 个字节或者遇到 '\n' 才发生一次系统调用 `write`，虽然 `hello worl\n` 只有 11 个字节，但这里相比 3.3 还多设置了缓冲区类型为行缓冲，因此 '\n' 生效，刷清了缓冲区。
+***答案*** ： hello worl
+***原因*** ：`setvbuf` 将输出缓冲区设置为 `12` 个字节，并将缓冲区类型设置为行缓冲，即每次写入满或者超过 `12` 个字节或者遇到 `'\n'` 才发生一次系统调用 `write`，虽然 `hello worl\n` 只有 `11` 个字节，但这里相比 `3.3` 还多设置了缓冲区类型为行缓冲，因此 `'\n'` 生效，刷清了缓冲区。
 
 
