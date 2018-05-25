@@ -48,8 +48,7 @@ void print_stdio_buffer_info_nb() {
     printf_nb("stdio buffer type : ");
     if      (stdout->_flags & _IONBF)   printf_nb("no buffer");
     else if (stdout->_flags & _IOLBF)   printf_nb("line buffer");
-    else if (stdout->_flags & _IOFBF)   printf_nb("full buffer");
-    else                                printf_nb("unknow buffer");
+    else                                printf_nb("full buffer");
     printf_nb("\n");
     printf_nb("stdio buffer size : %ld B\n", stdout->_bf._size);
     printf_nb("stdio buffer first bytes : %c\n",
