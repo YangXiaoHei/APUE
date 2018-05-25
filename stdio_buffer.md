@@ -105,7 +105,6 @@ OK，准备工作完毕，我们开始吧。
 
 ***解释*** ：`return 0` 等价于 `exit(0)`
 
--
 ### 验证
 
 链接到终端的标准 `I/O` 库缓冲区默认被设置为行缓冲，这一点如何验证呢？其实是有办法的。下面贴出 `FILE` 流对象的结构体布局。
@@ -151,7 +150,7 @@ void setbuf(FILE *fp, char buf)
 int setvbuf(FILE *fp, char buf, int mode, size_t size)
 ```
 
-mode 的取值有 `_IONBF`，`_IOLBF`，`_IOFBF`，分别代表无缓冲区，行缓冲区，全缓冲区。
+`mode` 的取值有 `_IONBF`，`_IOLBF`，`_IOFBF`，分别代表无缓冲区，行缓冲区，全缓冲区。
 
 #### 3.1 下面的代码将在终端上输出什么？
 
