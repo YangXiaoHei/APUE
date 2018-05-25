@@ -355,3 +355,31 @@ if ((fd = creat(path, FILE_MODE)) < 0)
 > 从下图可以看出，`/dev` 目录的用户写权限被关闭，这意味着除非是超级用户，否则无法在 `/dev` 目录下进行删除文件或者创建文件操作。
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/4.17.png)
+
+# Chapter_05
+
+####  5.1&emsp; 用 setvbuf 实现 setbuf。
+
+> [yh_setbuf.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_05/review/setbuf_imp.c)
+
+####  5.2&emsp; 使用下列程序复制文件，若将程序中的 MAXLINE 改为 4，当复制的行超过最大值时会出现什么情况？对此进行解释。
+
+```C
+int main() {
+	char buf[MAXLINE];
+	while (fgets(buf, MAXLINE, stdin) != NULL)
+		if (fputs(buf, stdout) == EOF)
+			err_sys("output error");
+	if (ferror(stdin))
+		err_sys("input error");
+	exit(0);
+}
+```
+> `fgets` 读入数据，直到行结束或者缓冲区满（留出一个字节存放终止 '\0'），同样，`fputs` 只负责将缓冲区内容输出直到遇到一个 `\0`，而不关心缓冲区中是否包含换行符。所以即使 `MAXLINE` 很小，仍然可以正常工作，只不过循环迭代的次数更多，因为每次读到的内容少了。
+
+> [copyt_test.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_05/review/copy_test.c)
+
+> 运行结果如下
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.png)
+
