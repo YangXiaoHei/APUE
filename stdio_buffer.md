@@ -157,8 +157,9 @@ mode 的取值有 `_IONBF`，`_IOLBF`，`_IOFBF`，分别代表无缓冲区，�
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.1.diy_buf.png)
 
-答案 ：hello world
-原因 ：`setbuf` 将输出缓冲区设置为无缓冲，即调用 `printf(msg)` 将会刷清缓冲区 `strlen(msg)` 次。
+***答案*** ：hello world
+
+***原因*** ：`setbuf` 将输出缓冲区设置为无缓冲，即调用 `printf(msg)` 将会刷清缓冲区 `strlen(msg)` 次。
 
 ### 验证 
 
@@ -175,6 +176,7 @@ mode 的取值有 `_IONBF`，`_IOLBF`，`_IOFBF`，分别代表无缓冲区，�
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.2.diy_buf.png)
 
 ***答案*** ：无
+
 ***原因*** ：`setbuf` 将输出缓冲区设置为 `12` 个字节，即每次写入数据大于或等于 `12` 个字节才刷清缓冲区，而 `hello world` 只有 `11` 个字节，所以不会刷清缓冲区。
 
 #### 3.3 下面的代码将在终端上输出什么？
@@ -198,6 +200,7 @@ mode 的取值有 `_IONBF`，`_IOLBF`，`_IOFBF`，分别代表无缓冲区，�
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.4.diy_buf.png)
 
 ***答案*** ： hello worl
+
 ***原因*** ：`setvbuf` 将输出缓冲区设置为 `12` 个字节，并将缓冲区类型设置为行缓冲，即每次写入满或者超过 `12` 个字节或者遇到 `'\n'` 就刷清缓冲区，虽然 `hello worl\n` 只有 `11` 个字节，但这里相比 `3.3` 还多设置了缓冲区类型为行缓冲，因此 `'\n'` 生效，刷清了缓冲区。
 
 
