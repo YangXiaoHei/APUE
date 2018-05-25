@@ -61,7 +61,7 @@ void print_stdio_buffer_info_nb() {
 #### 1.4 为了偷懒，定义如下宏：
 
 ```C
-#ifdef print_stdio_buffer_info_nb
+#ifdef info_nb
 #error what a fuck ??
 #else
 #define info_nb() \
