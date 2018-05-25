@@ -81,7 +81,7 @@ OK，准备工作完毕，我们开始吧。
 
 ### 2，默认缓冲
 
-#### 2.1 下面代码将在屏幕输出什么？
+#### 2.1 下面的代码将在终端上输出什么？
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.1.def_buf.png)
 
@@ -89,7 +89,7 @@ OK，准备工作完毕，我们开始吧。
 
 ***解释*** ：链接到终端的标准 `I/O` 库默认是行缓冲的，行缓冲意味着只有当遇到字符串的 `'\n'` 才会刷清缓冲区。
 
-#### 2.2 下面代码将在屏幕输出什么？
+#### 2.2 下面的代码将在终端上输出什么？
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.2.def_buf.png)
 
