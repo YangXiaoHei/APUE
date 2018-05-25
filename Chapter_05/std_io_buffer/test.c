@@ -37,8 +37,7 @@ void print_stdio_buffer_info_nb() {
     printf_nb("stdio buffer type : ");
     if      (stdout->_flags & _IONBF)   printf_nb("no buffer");
     else if (stdout->_flags & _IOLBF)   printf_nb("line buffer");
-    else if (stdout->_flags & _IOFBF)   printf_nb("full buffer");
-    else                                printf_nb("unknow buffer");
+    else                                printf_nb("full buffer");
     printf_nb("\n");
     printf_nb("stdio buffer size : %ld B\n", stdout->_bf._size);
     printf_nb("stdio buffer first bytes : %c\n",
@@ -51,19 +50,13 @@ void print_stdio_buffer_info_nb() {
 #ifdef print_stdio_buffer_info_nb
 #error what a fuck ??
 #else
-#define info_nb \
+#define info_nb() \
 print_stdio_buffer_info_nb();
 #endif
 
 int main() {
-    
-    info_nb
-    
+    info_nb();
     setbuf(stdout, NULL);
-    
-    info_nb
-    
-    printf("hello world");
-    
+    info_nb();
     _exit(0);
 }
