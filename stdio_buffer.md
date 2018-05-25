@@ -2,7 +2,7 @@
 
 ## 一，前言
 
-标准 `I/O` 库指的是 `printf`，`scanf`, `sprintf` 等库函数。其中有的是带缓冲的，有的则不带缓冲。一个简单的规律总结如下，如果函数声明需要一个数组作为参数（比如：sprintf(char *buf, const char *format, ...)），那么它不带缓冲，即调用它不会改变标准 `I/O` 库的缓冲区。如果函数不需要数组作为参数（比如：printf(const char *format, ...)），那么它是带缓冲的，即调用它会改变标准 `I/O` 库的缓冲区。
+标准 `I/O` 库指的是 `printf`，`scanf`, `sprintf` 等库函数。其中有的是带缓冲的，有的则不带缓冲。一个简单的规律总结如下，如果函数声明需要一个数组作为参数（比如：`sprintf(char *buf, const char *format, ...)`），那么它不带缓冲，即调用它不会改变标准 `I/O` 库的缓冲区。如果函数不需要数组作为参数（比如：`printf(const char *format, ...)`），那么它是带缓冲的，即调用它会改变标准 `I/O` 库的缓冲区。
 
 ## 二，实验
 
@@ -57,8 +57,8 @@ void print_stdio_buffer_info_nb() {
 #ifdef print_stdio_buffer_info_nb
 #error what a fuck ??
 #else
-#define info_nb() \
-print_stdio_buffer_info_nb()
+#define info_nb \
+print_stdio_buffer_info_nb();
 #endif
 ```
 
@@ -67,7 +67,7 @@ print_stdio_buffer_info_nb()
 为方便叙述，在此统下列用语的语义。
 
 * 刷清缓冲区 : 标准 `I/O` 库调用系统调用 `write`，将缓冲区数据全部写入到内核，并清空缓冲区数据。
-* 链接到终端 : 标准输出，标准输入，标准出错这三个文件描述符在设备文件 `/dev/ttys00x` 上打开。 
+* 链接到终端 : 设备文件 `/dev/ttys00x` 在标准输出，标准输入，标准出错这三个文件描述符上打开。 
 
 OK，准备工作完毕，我们开始吧。
 
@@ -93,9 +93,9 @@ OK，准备工作完毕，我们开始吧。
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.3.def_buf.png)
 
-答案 ：hello world
+***答案*** ：hello world
 
-解释 ：`exit()` 的工作流程中，最后一步会调用 `fclose(stdout)` 刷清缓冲区，而 `_exit()` 不会刷清缓冲区。
+***解释*** ：`exit()` 的工作流程中，最后一步会调用 `fclose(stdout)` 刷清缓冲区，而 `_exit()` 不会刷清缓冲区。
 
 #### 2.4 下面的代码将在终端上输出什么？
 
