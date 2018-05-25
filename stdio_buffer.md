@@ -68,7 +68,7 @@ OK，准备工作完毕，我们开始吧。
 
 #### 2.1 下面代码将在屏幕输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.1.1.def_buf.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.1.def_buf.png)
 
 答案 ：什么都不输出。
 
@@ -76,7 +76,7 @@ OK，准备工作完毕，我们开始吧。
 
 #### 2.2 下面的代码将在屏幕上输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.1.2.def_buf.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.2.def_buf.png)
 
 答案 ：输出 hello world（回车换行）
 
@@ -84,7 +84,7 @@ OK，准备工作完毕，我们开始吧。
 
 #### 2.3 下面代码将在屏幕上输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.1.3.def_buf.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.3.def_buf.png)
 
 答案 ：输出 hello world
 
@@ -92,7 +92,7 @@ OK，准备工作完毕，我们开始吧。
 
 #### 2.4 下面代码将在屏幕上输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.1.4.def_buf.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.4.def_buf.png)
 
 答案 ：输出 hello world
 
@@ -103,15 +103,15 @@ OK，准备工作完毕，我们开始吧。
 
 上面说了半天，默认是行缓冲，怎么验证呢？其实是有办法的。下面贴出 `FILE` 流对象的结构体布局。
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.1.FILE_layout.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.FILE_layout.png)
  
  其中 `_flags` 包含了缓冲区类型的信息，`_bf` 其实就是缓冲区本身，验证代码如下 :
  
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.1.verify.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.verify.png)
  
 执行结果 :
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.1.verify_result.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.verify_result.png)
  
  从中可以看出下列两点信息：
  
@@ -120,7 +120,7 @@ OK，准备工作完毕，我们开始吧。
 
 #### 2.5 下面的代码将在屏幕上输出什么
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.1.5.def_buf.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.5.def_buf.png)
 
 答案 ：4096 个 'a'
 
@@ -128,7 +128,7 @@ OK，准备工作完毕，我们开始吧。
 
 #### 2.6 下面的代码将在屏幕上输出什么
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.1.6.def_buf.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.6.def_buf.png)
 
 答案 ：什么都不输出
 
@@ -147,31 +147,31 @@ mode 的取值有 `_IONBF`，`_IOLBF`，`_IOFBF`，分别代表无缓冲区，�
 
 #### 3.1 下面的代码将输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.1.diy_buf.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.1.diy_buf.png)
 
 答案 ：hello world
 原因 ：`setbuf` 将输出缓冲区设置为无缓冲，即每次调用 `printf` 都对应一次系统调用 `write`
 
 验证 
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.1.verify.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.1.verify.png)
 
 验证结果
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.1.verify_result.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.1.verify_result.png)
 
 从验证结果可以看出，调用 `setbuf(stdout, NULL)` 后，输出缓冲区被设置为无缓冲（其实是有 1 个字节大小的缓冲区，只不过每次写一个字符，缓冲区容量就满了），于是每次调用 printf(msg) 都发生了 strlen(msg) 次系统调用 `write`
 
 #### 3.2 下面的代码将输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.2.diy_buf.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.2.diy_buf.png)
 
 答案 ：什么都不输出
 原因 ：`setbuf` 将输出缓冲区设置为 12 个字节，即每次写入满或者超过 12 个字节才发生一次系统调用 `write`，而 `hello world` 只有 11 个字节。
 
 #### 3.3 下面的代码将输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.3.diy_buf.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.3.diy_buf.png)
 
 答案 ：什么都不输出
 
@@ -179,15 +179,15 @@ mode 的取值有 `_IONBF`，`_IOLBF`，`_IOFBF`，分别代表无缓冲区，�
 
 验证 
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.3.verify.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.3.verify.png)
 
 验证结果
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.3.verify_result.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.3.verify_result.png)
 
 #### 3.4 下面的代码将输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.4.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.4.png)
 
 答案 ： hello worl
 原因 ：`setvbuf` 将输出缓冲区设置为 12 个字节，并将缓冲区类型设置为行缓冲，即每次写入满或者超过 12 个字节或者遇到 '\n' 才发生一次系统调用 `write`，虽然 `hello worl\n` 只有 11 个字节，但这里相比 3.3 还多设置了缓冲区类型为行缓冲，因此 '\n' 生效，刷清了缓冲区。
