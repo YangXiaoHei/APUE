@@ -82,7 +82,12 @@ OK，准备工作完毕，我们开始吧。
 
 #### 2.1 下面的代码将在终端上输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.1.def_buf.png)
+```C
+int main() {
+   printf("hello world");
+   _exit(0);
+}
+```
 
 ***答案*** ：无。
 
@@ -90,7 +95,12 @@ OK，准备工作完毕，我们开始吧。
 
 #### 2.2 下面的代码将在终端上输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.2.def_buf.png)
+```C
+int main() {
+   printf("hello world\n");
+   _exit(0);
+}
+```
 
 ***答案*** ： hello world（回车换行）
 
@@ -98,7 +108,12 @@ OK，准备工作完毕，我们开始吧。
 
 #### 2.3 下面的代码将在终端上输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.3.def_buf.png)
+```C
+int main() {
+   printf("hello world");
+   exit(0);
+}
+```
 
 ***答案*** ：hello world
 
@@ -106,7 +121,12 @@ OK，准备工作完毕，我们开始吧。
 
 #### 2.4 下面的代码将在终端上输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.4.def_buf.png)
+```C
+int main() {
+   printf("hello world");
+   return 0;
+}
+```
 
 ***答案*** ：hello world
 
@@ -120,7 +140,14 @@ OK，准备工作完毕，我们开始吧。
  
  其中 `_flags` 包含了缓冲区类型的信息，`_bf` 其实就是缓冲区本身，验证代码如下 :
  
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.verify.png)
+```C
+int main() {
+   info_nb();
+   printf("hello world");
+   info_nb();
+   _exit(0);
+}
+```
  
 ### 执行结果 :
 
@@ -134,7 +161,14 @@ OK，准备工作完毕，我们开始吧。
 
 #### 2.5 下面的代码将在终端上输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.5.def_buf.png)
+```C
+int main() {
+   char buf[4097] = { 0 };
+   memset(buf, 'a', sizeof(buf) - 1);
+   printf("%s", buf);
+   _exit(0);
+}
+```
 
 ***答案*** ：4096 个 'a'
 
@@ -142,7 +176,15 @@ OK，准备工作完毕，我们开始吧。
 
 #### 2.6 下面的代码将在终端上输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.6.def_buf.png)
+```C
+int main() {
+   char buf[4097] = { 0 };
+   memset(buf, 'a', sizeof(buf) - 1);
+   buf[4095] = 0;
+   printf("%s", buf);
+   _exit(0);
+}
+```
 
 ***答案*** ：无
 
@@ -161,7 +203,13 @@ int setvbuf(FILE *fp, char buf, int mode, size_t size)
 
 #### 3.1 下面的代码将在终端上输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.1.diy_buf.png)
+```C
+int main() {
+   setbuf(stdout, NULL);
+   printf("%s", buf);
+   _exit(0);
+}
+```
 
 ***答案*** ：hello world
 
@@ -169,7 +217,14 @@ int setvbuf(FILE *fp, char buf, int mode, size_t size)
 
 ### 验证 
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.1.verify.png)
+```C
+int main() {
+    info_nb();
+    setbuf(stdout, NULL);
+    info_nb();
+    _exit(0);
+}
+```
 
 ### 验证结果
 
@@ -179,49 +234,80 @@ int setvbuf(FILE *fp, char buf, int mode, size_t size)
 
 #### 3.2 下面的代码将在终端上输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.2.diy_buf.png)
+```C
+int main() {
+    char buf[11];
+    setbuf(stdout, buf);
+    printf("hello world");
+    _exit(0);
+}
+```
 
 ***答案*** ：无
 
-***原因*** ：`setbuf` 将输出缓冲区设置为 `12` 个字节，即每次写入数据大于或等于 `12` 个字节才刷清缓冲区，而 `hello world` 只有 `11` 个字节，所以不会刷清缓冲区。
+***原因*** ：`setbuf` 会默认传入的缓冲区有 `BUFSIZ` 的长度。在我的系统中，该宏值为 1024，而 `hello world` 只有 `11` 个字节，因此不会刷清缓冲区。
 
 #### 3.3 下面的代码将在终端上输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.3.diy_buf.png)
+```C
+int main() {
+    char buf[BUFSIZ] = { 0 };
+    setbuf(stdout, buf);
+    char msg[BUFSIZ + 1] = { 0 };
+    memset(msg, 'a', sizeof(msg) - 1);
+    printf("%s", msg)
+    _exit(0);
+}
+```
 
-***答案*** ：什么都不输出
+***答案*** ：输出 `BUFSIZ` 个 `a`
 
-***原因*** ：`setbuf` 将输出缓冲区设置为 `12` 个字节，即每次写入数据大于或等于 `12` 个字节才刷清缓冲区，而 `hello worl\n` 只有 `11` 个字节。注意⚠️ `setbuf` 如果第二个参数不为空，则会将缓冲区类型置为 `unknow buffer`，因此 `'\n'` 没效果。
-
-#### 验证 
-
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.3.verify.png)
-
-#### 验证结果
-
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.3.verify_result.png)
+***原因*** ：写入数据长度等于或大于缓冲区长度，触发刷清缓冲区。
 
 #### 3.4 下面的代码将在终端上输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.4.diy_buf.png)
+```C
+int main() {
+    char buf[12] = { 0 };
+    setvbuf(stdout, buf, _IOLBF, sizeof(buf)); 
+    printf("hello world");
+    _exit(0);
+}
+```
 
-***答案*** ： hello worl
+***答案*** ： 无
 
-***原因*** ：`setvbuf` 将输出缓冲区设置为 `12` 个字节，并将缓冲区类型设置为行缓冲，即每次写入满或者超过 `12` 个字节或者遇到 `'\n'` 就刷清缓冲区，虽然 `hello worl\n` 只有 `11` 个字节，但这里相比 `3.3` 还多设置了缓冲区类型为行缓冲，因此 `'\n'` 生效，刷清了缓冲区。
+***原因*** ：`setvbuf` 将输出缓冲区设置为 `12` 个字节，并将缓冲区类型设置为行缓冲，即每次写入满或者超过 `12` 个字节或者遇到 `'\n'` 就刷清缓冲区，虽然 `hello world` 只有 `11` 个字节，因此不刷清了缓冲区。
 
 
 #### 3.5 下面的代码将在终端上输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.5.diy_buf.png)
+```C
+int main() {
+    char buf[12] = { 0 };
+    setvbuf(stdout, buf, _IOLBF, sizeof(buf)); 
+    printf("hello world");
+    fclose(stdout);
+    _exit(0);
+}
+```
 
 ***答案*** ： hello world
 
-***原因*** ：`fclose(stdout)` 先刷清缓冲区，然后看缓冲区是否分配在堆上，如果是那么就 free 该缓冲区，如果是分配在栈上，那么不管。最后再关闭流所关联的文件描述符。
+***原因*** ：虽然 `hello world` 只有 `11` 个字节，也没有遇到 `\n`，但是 `fclose(stdout)` 会先刷清缓冲区，然后看缓冲区是否分配在堆上，如果是那么就 free 该缓冲区，如果是分配在栈上，那么不管。最后再关闭流所关联的文件描述符。
 
 
 #### 3.6 下面的代码将在终端上输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.6.diy_buf.png)
+```C
+int main() {
+    char buf[12] = { 0 };
+    setvbuf(stdout, buf, _IOLBF, sizeof(buf)); 
+    printf("hello world");
+    fflush(stdout);
+    _exit(0);
+}
+```
 
 ***答案*** ： hello world
 
@@ -229,7 +315,19 @@ int setvbuf(FILE *fp, char buf, int mode, size_t size)
 
 #### 3.7 执行下列代码后，./test 文件中的内容是什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.7.diy_buf.png)
+```C
+int main() {
+    FILE *fp = fopen("./text", "w+");
+    if (fp == NULL) {
+        printf_nb("fopen() error\n");
+        _exit(1);
+    }
+    char buf[100] = { 0 };
+    setvbuf(stdout, buf, _IOFBF, sizeof(buf));
+    fprintf(fp, "hello world");
+    _exit(0);
+}
+```
 
 ***答案*** ： 无
 
@@ -238,7 +336,20 @@ int setvbuf(FILE *fp, char buf, int mode, size_t size)
 
 #### 3.8 执行下列代码后，./test 文件中的内容是什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.8.diy_buf.png)
+```C
+int main() {
+    FILE *fp = fopen("./text", "w+");
+    if (fp == NULL) {
+        printf_nb("fopen() error\n");
+        _exit(1);
+    }
+    char buf[100] = { 0 };
+    setvbuf(stdout, buf, _IOFBF, sizeof(buf));
+    fprintf(fp, "hello world");
+    fclose(fp); // or fflush(fp);
+    _exit(0);
+}
+```
 
 ***答案*** ： hello world
 
@@ -248,7 +359,14 @@ int setvbuf(FILE *fp, char buf, int mode, size_t size)
 
 #### 4.1 下面的代码将在终端上输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.4.1.heap_stack.png)
+```C
+int main() {
+    char buf[BUFSIZ] = { 0 };
+    setbuf(stdout, buf);
+    printf("hello world");
+    return 0;
+}
+```
 
 ***答案*** ： 乱码
 
@@ -256,7 +374,14 @@ int setvbuf(FILE *fp, char buf, int mode, size_t size)
 
 #### 4.2 下面的代码将在终端上输出什么？
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.4.2.heap_stack.png)
+```C
+int main() {
+    char *buf = calloc(100, 1);
+    setbuf(stdout, buf);
+    printf("hello world");
+    return 0;
+}
+```
 
 ***答案*** ： hello world
 
