@@ -211,3 +211,56 @@ int setvbuf(FILE *fp, char buf, int mode, size_t size)
 ***原因*** ：`setvbuf` 将输出缓冲区设置为 `12` 个字节，并将缓冲区类型设置为行缓冲，即每次写入满或者超过 `12` 个字节或者遇到 `'\n'` 就刷清缓冲区，虽然 `hello worl\n` 只有 `11` 个字节，但这里相比 `3.3` 还多设置了缓冲区类型为行缓冲，因此 `'\n'` 生效，刷清了缓冲区。
 
 
+#### 3.5 下面的代码将在终端上输出什么？
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.5.diy_buf.png)
+
+***答案*** ： hello world
+
+***原因*** ：`fclose(stdout)` 先刷清缓冲区，然后看缓冲区是否分配在堆上，如果是那么就 free 该缓冲区，如果是分配在栈上，那么不管。最后再关闭流所关联的文件描述符。
+
+
+#### 3.6 下面的代码将在终端上输出什么？
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.6.diy_buf.png)
+
+***答案*** ： hello world
+
+***原因*** ：`fflush` 刷清缓冲区。
+
+#### 3.7 执行下列代码后，./test 文件中的内容是什么？
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.7.diy_buf.png)
+
+***答案*** ： 无
+
+***原因*** ：缓冲区大小设置为 `100` 字节，而 `hello world` 仅 `11` 个字节，因此不会触发刷清缓冲区。
+
+
+#### 3.8 执行下列代码后，./test 文件中的内容是什么？
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.8.diy_buf.png)
+
+***答案*** ： hello world
+
+***原因*** ：同 `3.5`
+
+### 4，缓冲区内存不同分配方式的影响
+
+#### 4.1 下面的代码将在终端上输出什么？
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.4.1.heap_stack.png)
+
+***答案*** ： 乱码
+
+***原因*** ：`buf` 是分配在 `main` 函数帧上的栈内存，在 `main` 函数返回后就被回收，因此当 `main` 函数返回，启动例程调用 `exit(0)` 时，发生了刷清缓冲区，但此时，缓冲区中的数据已经无效。
+
+#### 4.2 下面的代码将在终端上输出什么？
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.4.2.heap_stack.png)
+
+***答案*** ： hello world
+
+***原因*** ：`buf` 是分配在堆上的内存，在 `main` 函数返回后就仍然存在，因此当 `main` 函数返回，启动例程调用 `exit(0)` 时，发生了刷清缓冲区。
+
+
