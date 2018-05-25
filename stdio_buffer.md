@@ -149,9 +149,18 @@ int main() {
 }
 ```
  
-### 执行结果 :
+### 执行结果如下 :
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.verify_result.png)
+> ---------------------------
+> stdio buffer type : full buffer
+> stdio buffer size : 0 B
+> stdio buffer first bytes :  
+> ---------------------------
+> ---------------------------
+> stdio buffer type : line buffer
+> stdio buffer size : 4096 B
+> stdio buffer first bytes : h
+> ---------------------------
  
  > 从中还可以看出下列两点额外信息：
  
@@ -228,7 +237,16 @@ int main() {
 
 ### 验证结果
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.3.1.verify_result.png)
+> ---------------------------
+> stdio buffer type : full buffer
+> stdio buffer size : 0 B
+> stdio buffer first bytes :  
+> ---------------------------
+> ---------------------------
+> stdio buffer type : no buffer
+> stdio buffer size : 1 B
+> stdio buffer first bytes : ?
+> ---------------------------
 
 可以看出，调用 `setbuf(stdout, NULL)` 后，输出缓冲区类型变为无缓冲（无缓冲其实也是有 `1` 个字节大小的缓冲区，只不过每写入一个字符，缓冲区容量满，于是发生刷清缓冲区）。
 
