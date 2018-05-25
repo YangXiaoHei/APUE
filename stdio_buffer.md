@@ -47,7 +47,9 @@ void print_stdio_buffer_info_nb() {
     printf_nb("\n");
     printf_nb("stdio buffer size : %ld B\n", stdout->_bf._size);
     printf_nb("stdio buffer first bytes : %c\n",
-              stdout->_bf._base != NULL ? *stdout->_bf._base : ' ');
+              stdout->_bf._base != NULL ?
+              (*stdout->_bf._base == 0 ? '?' : *stdout->_bf._base )
+              : ' ');
     printf_nb("---------------------------\n");
 }
 ```
@@ -57,8 +59,8 @@ void print_stdio_buffer_info_nb() {
 #ifdef print_stdio_buffer_info_nb
 #error what a fuck ??
 #else
-#define info_nb \
-print_stdio_buffer_info_nb();
+#define info_nb() \
+print_stdio_buffer_info_nb()
 #endif
 ```
 
