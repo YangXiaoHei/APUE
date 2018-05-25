@@ -383,3 +383,34 @@ int main() {
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.2.png)
 
+####  5.3&emsp; printf 返回 0 表示什么？
+
+> printf("")，输出了一个空串。
+
+####  5.4&emsp; 下面的代码在一些机器上运行正确，而在另外一些机器上运行时出错，解释问题所在。
+
+```C
+#include <stdio.h>
+int main() {
+	char c;
+	while ((c = getchar()) != EOF)
+		putchar(c);
+	return 0;
+}
+```
+
+> 一些机器上 `char` 是有符号的，那么 `EOF` 和 `c` 的比较没有问题。在另一些 `char` 是无符号的机器上，`EOF` 和 `char` 比较时被转成了无符号数，即 `255`，因此比较永远不能成功，程序陷入死循环。
+
+####  5.5&emsp; 对标准 I/O 流如何使用 fsync 函数？
+
+> 先调用 `fflush(stdout)` 将用户缓冲区中的数据清刷到内核缓冲区，然后再调用 `fsync(stdout->_file)` 将内核缓冲区中的数据强制写入磁盘。
+
+####  5.6&emsp; 在下列程序中，打印的提示信息没有包含换行符，程序也没有调用 fflush 函数，请解释输出提示信息的原因是什么？
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/5.6.jpg)
+
+> 每次调用 `fgets` 时，`fgets` 首先清刷输出缓冲区。
+
+####  5.7&emsp; 基于 BSD 的系统提供了 funopen 的函数调用使我们可以拦截读、写、定位以及关闭一个流的调用。使用这个函数为 FreeBSD 和 Mac OS X 实现 fmemopen。
+
+
