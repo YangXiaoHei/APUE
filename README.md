@@ -197,7 +197,7 @@ dup2(STDOUT_FILENO, STDERR_FILENO);
 `./a.out 2>&1 > outfile` 等同于如下代码：
 ```C
 dup2(STDOUT_FILENO, STDERR_FILENO);
-dup2(outfile_fd, SSTDOUT_FILENO);
+dup2(outfile_fd, STDOUT_FILENO);
 ```
 > 先将标准错误重定向到标准输出，然后再将标准输出重定向到 outfile，也就是说，最后文件描述符 2 指向了标准输出，文件描述符 1 指向了 outfile。
 
