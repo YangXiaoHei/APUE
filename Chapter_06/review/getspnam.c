@@ -1,11 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <shadow.h>
+
+int main(int argc, char *argv[]) {
+
 	if (argc != 2) {
 		printf("./a.out name\n");
 		exit(1);
 	}
 	
+	struct spwd *pwd;
 
+	if ((pwd = getspnam(argv[1])) == NULL) {
+		printf("getspnam fail\n");
 		exit(1);
 	}
 	printf("sp_namp = %s\n"
