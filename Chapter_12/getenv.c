@@ -26,7 +26,7 @@ char *yh_getenv(const char *name) {
 
 void *thr_run(void *arg) {
     while (1) {
-        printf("thread【%d】 USER = %s\n",(int)arg, yh_getenv("USER"));
+        printf("thread【%ld】 USER = %s\n",(long)arg, yh_getenv("USER"));
         usleep(rand() % 100 + 1);
     }
     return (void *)1;
