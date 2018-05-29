@@ -449,7 +449,7 @@ void endpwent(void)
 
 > [uname.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_06/review/uname.c)
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/6.3)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/6.3.png)
 
 ####  6.4&emsp; 计算可由 time_t 数据类型表示的最近时间。如果超出了这一时间将会如何？
 
@@ -459,7 +459,7 @@ void endpwent(void)
 
 > [date.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_06/review/time.c)
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/6.3)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/6.5.png)
 
 
 
