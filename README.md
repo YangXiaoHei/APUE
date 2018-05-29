@@ -414,4 +414,38 @@ int main() {
 
 ####  5.7&emsp; 基于 BSD 的系统提供了 funopen 的函数调用使我们可以拦截读、写、定位以及关闭一个流的调用。使用这个函数为 FreeBSD 和 Mac OS X 实现 fmemopen。
 
+# Chapter_06
+
+####  6.1&emsp; 如果系统使用阴影文件，那么如何取得加密口令？
+
+使用如下 `API`
+```C
+struct spwd *getspnam(const char *name)
+struct spwd *getspent(void)
+void setspent(void)
+void endspent(void)
+```
+
+获取阴影文件的加密口令。在 `Mac OS X` 没有阴影文件，也没有上述接口。
+
+####  6.2&emsp; 假设你有超级用户权限，并且系统使用了阴影口令，重新考虑上一道习题。
+
+在 `Linux` 或 `Solaris` 系统，凭借超级用户特权，使用如下 `API` 取得 `struct spwd` 结构，并读取其中的 `sp_pwdp` 字段，即是加密口令。
+```C
+struct spwd *getspnam(const char *name)
+struct spwd *getspent(void)
+void setspent(void)
+void endspent(void)
+```
+在 `FreeBSD` 下，凭借超级用户特权，使用如下 `API` 取得 `struct passwd` 结构体，并读取其中的 `pw_passwd` 字段，即是加密口令。如果不是超级用户特权，那么将返回 `*`。在 `Mac OS X` 下，无论是否使用超级用户特权，`pw_passwd` 都返回 `*`，并且也没有阴影文件。
+```C
+struct passwd *getpwnam(const char *name)
+struct passwd *getpwent(void)
+void setpwent(void)
+void endpwent(void)
+```
+
+####  6.3&emsp; 编写一程序，它调用 uname 并输出 utsname 结构中所有字段，将该输出与 uname(1) 命令的输出结构比较。
+
+
 
