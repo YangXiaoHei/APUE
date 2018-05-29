@@ -447,5 +447,20 @@ void endpwent(void)
 
 ####  6.3&emsp; 编写一程序，它调用 uname 并输出 utsname 结构中所有字段，将该输出与 uname(1) 命令的输出结构比较。
 
+> [uname.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_06/review/uname.c)
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/6.3)
+
+####  6.4&emsp; 计算可由 time_t 数据类型表示的最近时间。如果超出了这一时间将会如何？
+
+> `time_t` 在当前系统中被定义为 `long` 类型，最大值为 `2 ^ 63 - 1 = 9223372036854775807`，所以将在 `(2 ^ 63 - 1) / (365 * 24 * 60 * 60) + 1970 = 924712088745` 年溢出，也即是距今 `9千2百亿` 年后溢出，超过这一时间，`time_t` 负溢出，变成负数。
+
+####  6.4&emsp; 获取当前时间并使用 strftime 将输出结果转换为类似于 date(1) 命令的默认输出。将环境变量 TZ 设置为不同值，观察输出结构。
+
+> [date.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_06/review/time.c)
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/6.3)
+
+
 
 
