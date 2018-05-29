@@ -111,15 +111,15 @@ typedef __int8_t int8_t;
   nlink_t	->	unsigned short
   off_t		->	long long
   pthread_t	->	struct _opaque_pthread_t {
-				long __sig;
-				struct __darwin_pthread_handler_rec  *__cleanup_stack;
-				char __opaque[8176];
-			};
-			struct __darwin_pthread_handler_rec {
-				void (*__routine)(void *);	// Routine to call
-				void *__arg;			// Argument to pass
-				struct __darwin_pthread_handler_rec *__next;
-			};
+					long __sig;
+					struct __darwin_pthread_handler_rec  *__cleanup_stack;
+					char __opaque[8176];
+				};
+				struct __darwin_pthread_handler_rec {
+					void (*__routine)(void *);	// Routine to call
+					void *__arg;			// Argument to pass
+					struct __darwin_pthread_handler_rec *__next;
+				};
   ptrdiff_t		->	long
   rlim_t			->	unsigned long long
   sig_atomic_t		->	int
