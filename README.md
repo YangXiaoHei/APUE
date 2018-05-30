@@ -461,6 +461,65 @@ void endpwent(void)
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/6.5.png)
 
+# Chapter_07
+
+####  7.1&emsp; 在 Intel x86 系统上，使用 linux，如果执行一个输出 "hello,world" 的程序但不调用 exit 或 return，则程序的返回代码为 13 (用 shell 检查)，解释其原因。
+
+####  7.2&emsp; 下图中的 printf 函数的结果何时才被真正输出？
+
+> 当标准 I/O 库链接到终端时，是行缓冲的，当写入缓冲区数据遇到 “\n” 时发生刷清缓冲区，然后数据就被写到标准输出。如果标准输出被重定向到文件时，标准 I/O 库是全缓冲的，则遇到 “\n” 不会发生刷清缓冲区，只有当写入数据填满缓冲区时才刷清，真正的刷清发生在启动例程的 exit(0)  的 fclose(fp) 操作。
+
+####  7.3&emsp; 是否有方法不使用 (a)参数传递，(b)全局变量这两种方法，将 main 中的参数 argc 和 argv 传递给它所调用的其他函数？
+
+> 有方法，把 `argc` 和 `argv` 存储在全局变量里，然后再取出来，代码如下。
+
+> [command_line_args.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_07/review/pass.c)
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/7.3.png)
+
+####  7.4&emsp; 在有些 UNIX 系统实现中执行程序时访问不到其数据段的 0 单元，这只一种有意义的安排，为什么？
+
+> 解引用空指针就是访问 0 单元，可以借此终止该进程。
+
+####  7.5&emsp; 用 C 语言的 typedef 为终止处理程序定义一个新的数据类型 Exitfunc，使用该数据类型修改 atexit 的原型。
+
+```C
+typedef void(*Exitfunc)(void);
+int atexit(Exitfunc fp);
+```
+
+####  7.6&emsp; 如果用 calloc 分配一个 long 型的数组，数组的初始值是否为 0 ？如果用 calloc 分配一个指针数组，数组的初始值是否为空指针？
+
+> 是
+
+####  7.7&emsp; 在下图输出结果中，为什么没有给出堆和栈的大小？
+
+> 只有通过 `exec` 执行一个程序时，才会分配堆和栈空间。
+
+####  7.8&emsp; 为什么下图两个文件的大小（879443 和 8373） 不等于他们各自文本和数据大小的总和？
+
+> 可执行文件包含了用于调试 `core` 文件的符号表信息。
+
+####  7.9&emsp; 为什么下图简单的程序，使用共享库以后其可执行文件的大小变化如此巨大？
+
+> 没有使用共享库时，可执行文件的大部分都被标准 `I/O` 库所占据。
+
+####  7.10&emsp; 在 7.10 节中我们已经说明为什么不能将一个指针返回给一个自动变量，下面的程序是否正确？
+
+```C
+int f1(int val) {
+	int 	num = 0;
+	int 	*ptr = &num;
+	if (val == 0) {
+		int val;
+		val = 5;
+		ptr = &val;
+	}
+	return (*ptr + 1);
+}
+```
+> 当栈帧退出时它所使用的栈内存都无效，因此将该栈内存内的地址返回给调用栈帧，调用栈帧将持有一个无效的内存引用（虽然不一定是非法内存访问，但该引用无意义）。
+
 
 
 
