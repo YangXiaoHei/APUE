@@ -20,6 +20,7 @@ static void get_store_kv() {
 			printf("argv[%d] = %s\n", argc++, getenv(buf));
 		}
 	}
+	printf("argc = %d\n", argc);
 }
 
 int main(int argc, char *argv[]) {
