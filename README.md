@@ -537,6 +537,16 @@ int f1(int val) {
 
 ####  8.3&emsp; 重写下图程序，把 wait 换成 waitpid。不调用 pr_exit，而从 siginfo 结构中确定等价的信息。
 
+> 首先贴出 `siginfo_t` 结构体中的基本信息，见下图
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/8.2.1.png)
+
+> 如果进程是正常终止的，那么 `si_code` 的值为 `CLD_EXITED`，此时可以从 `si_status` 中取出退出状态码。
+> 如果 `si_code` 的值是 `CLD_KILLED` 或 `CLD_DUMPED` 或 `CLD_TRAPPED`，说明进程是被信号终止的，那么从 `si_status` 中取出来的就是终止该进程的信号。
+> ***⚠️注意：`si_signo` 是父进程接收到的信号，而不是终止子进程的信号！***
+
+> [waitpid.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_08/review2/waitpid.c)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/8.2.2.png)
+
 ####  8.4&emsp; 当用 $./a.out 执行下图程序一次时，其输出是正确的。但是若将该程序按下列方式执行多次，则其输出不正确。
 ```C
 $ ./a.out ; ./a.out ; ./a.out
