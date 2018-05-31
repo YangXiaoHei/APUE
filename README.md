@@ -575,7 +575,7 @@ utput from child
 > * 图 `10-24` 的同步方式为什么要在 `while` 跳出后将 `sigflag` 置为 `0`
 > * 如果将父子进程的最后两句代码 `WAIT_xxx` 和 `TELL_xxx` 删掉，运行程序会出现下面的情况（多运行几次）。
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/8.3.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/8.4.png)
 
 
 ####  8.5&emsp; 在下图程序中，调用 execl，指定 pathname 为解释器文件。如果将其改为调用 execlp，指定 testinterp 的 filename，并且目录 /home/sar/bin 是路径前缀，则 运行该程序时，argv[2] 的打印输出是什么？
