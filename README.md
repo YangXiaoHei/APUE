@@ -523,6 +523,38 @@ int f1(int val) {
 ```
 > 当栈帧退出时它所使用的栈内存都无效，因此将该栈内存内的地址返回给调用栈帧，调用栈帧将持有一个无效的内存引用（虽然不一定是非法内存访问，但该引用无意义）。
 
+# Chapter_08
+
+####  8.1&emsp; 下图程序中，如果用 exit 调用代替 _exit 调用，那么可能会使标准输出关闭，使 printf 返回 -1，修改该程序以验证在你所使用的系统上是否会产生此种结果。如果并非如此，你怎样处理才能得到类似结果？
+
+> 在我的系统上不会产生此结果：即 `exit` 不会关闭标准输出流。如果要让第二个 `printf` 无法打印返回 `-1`，只需要在子进程中手动 `fclose(stdout)` 就可以达到目的，代码如下。
+
+> [fclose_stdout.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_08/review2/exit.c)
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/8.1.png)
+
+####  8.2&emsp; 回忆下图存储空间布局，由于对应于每个函数调用的栈帧通常存储在栈中，并且由于调用 vfork 后，子进程运行在父进程的地址空间中，如果不是在 main 函数中而是在另一个函数中调用 vfork，此后子进程又从该函数返回，将会发生什么？请编写一段测试程序对此进行验证，并且画图说明发生了什么。
+
+####  8.3&emsp; 重写下图程序，把 wait 换成 waitpid。不调用 pr_exit，而从 siginfo 结构中确定等价的信息。
+
+####  8.4&emsp; 当用 $./a.out 执行下图程序一次时，其输出是正确的。但是若将该程序按下列方式执行多次，则其输出不正确。
+```C
+$ ./a.out ; ./a.out ; ./a.out
+output from parent
+ooutput from parent
+ouotuptut from child
+put from parent
+output from child
+utput from child
+```
+#### 原因是什么？怎样才能更正此类错误？如果使子进程首先输出，还会发生此问题吗？
+
+####  8.5&emsp; 在下图程序中，调用 execl，指定 pathname 为解释器文件。如果将其改为调用 execlp，指定 testinterp 的 filename，并且目录 /home/sar/bin 是路径前缀，则 运行该程序时，argv[2] 的打印输出是什么？
+
+####  8.6&emsp; 编写一段程序创建一个僵死进程，然后调用 system 执行 ps(1) 命令以验证该进程是僵死进程。
+
+####  8.7&emsp; 8.10 节中提及 POSIX.1 要求在 exec 时关闭打开目录流。按下列方法对此进行验证：对根目录调用 opendir，查看在你系统上实现的 DIR 结构，然后打印执行时关闭标志。接着打开统一目录读并打印执行时关闭标志。
+
 
 
 
