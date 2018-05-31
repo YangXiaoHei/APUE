@@ -567,16 +567,14 @@ utput from child
 
 > 注意点：
 > * `10.24` 的同步方式和我自己实现的同步方式稍有不同。具体见代码，下面简述。
-
 > * 书中使用 `while` 循环包裹 `sigsuspend` 的方式使进程挂起，该 `while` 循环的作用在于：如果进程不是由指定的 `SIGUSR1` 或 `SIGUSR2` 唤醒，那么我们注册的捕获函数就不会被调用，因此 `sigflag` 的值不会被修改，那么 `while` 循环没有跳出，迭代下一次，仍然使进程挂起。
-
 > * 我实现的同步方式没有使用 `while` 循环包裹 `sigsuspend`，因为我在调用 `sigsuspend` 前，阻塞了除 `SIGUSR1` 和 `SIGUSR2` 外的所有信号，因此挂起的进程不会被除 `SIGUSR1` 和 `SIGUSR2` 外的任何信号唤醒，那么挂起的进程被唤醒的唯一方式就是我们代码中手动 `kill(pid, SIGUSR1/SIGUSR2)` 的场所。
-
 > * 书上的实现显然更合理，在挂起进程等待被指定信号唤醒的时间里，仍然能接收其他信号才是合理的，只不过如果不是我们期待的信号，那么跳不出 `while` 循环，继续被挂起。
 
 > 没想通的点 :
 > * 图 `10-24` 的同步方式为什么要在 `while` 跳出后将 `sigflag` 置为 `0`
 > * 如果将父子进程的最后两句代码 `WAIT_xxx` 和 `TELL_xxx` 删掉，运行程序会出现下面的情况（多运行几次）。
+
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/8.3.png)
 
 
