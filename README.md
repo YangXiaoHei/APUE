@@ -580,6 +580,14 @@ utput from child
 
 ####  8.5&emsp; 在下图程序中，调用 execl，指定 pathname 为解释器文件。如果将其改为调用 execlp，指定 testinterp 的 filename，并且目录 /home/sar/bin 是路径前缀，则 运行该程序时，argv[2] 的打印输出是什么？
 
+ [echoarg.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_08/review2/echoarg.c)
+ [testinterp.sh](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_08/review2/testinterp.sh)
+ [first.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_08/review2/first.c)
+
+> 打印 `testinterp`
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/8.4.png)
+
 ####  8.6&emsp; 编写一段程序创建一个僵死进程，然后调用 system 执行 ps(1) 命令以验证该进程是僵死进程。
 
 ####  8.7&emsp; 8.10 节中提及 POSIX.1 要求在 exec 时关闭打开目录流。按下列方法对此进行验证：对根目录调用 opendir，查看在你系统上实现的 DIR 结构，然后打印执行时关闭标志。接着打开统一目录读并打印执行时关闭标志。
