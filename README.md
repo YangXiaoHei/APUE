@@ -476,7 +476,7 @@ void endpwent(void)
 
 > 有方法，把 `argc` 和 `argv` 存储在全局变量里，然后再取出来，代码如下。
 
-> [command_line_args.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_07/review/pass.c)
+> [command_line_args.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_07/review/comandlineparam.c)
 
 ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/7.3.png)
 
