@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
     } else if (pid == 0) {
         // execl("/Users/bot/Desktop/APUE/APUE/Chapter_08/review2/testinterp.sh",
         //     "testinterp", "myarg1", "MY ARG2", (char *)0);
-        execl("testinterp.sh", "testinterp", "myarg1", "MY ARG2", (char *)0);
+        execlp("testinterp.sh", "testinterp", "myarg1", "MY ARG2", (char *)0);
         perror("execl error");
         exit(1);
     }
