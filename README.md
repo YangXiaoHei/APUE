@@ -561,7 +561,7 @@ utput from child
 ```
 #### 原因是什么？怎样才能更正此类错误？如果使子进程首先输出，还会发生此问题吗？
 
-> [proc_sync.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_08/review2/waitpid.c)
+> [proc_sync.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_08/review2/sync.c)
 
 > 同步父子进程输出的步骤是：子进程等待父进程，父进程写完，父进程发通知，子进程收到通知开始写。接下来可能父进程在子进程写完前已经退出，那么 `shell` 开始执行下一个程序，该程序的输出可能会干扰还为完成输出的子进程。所以应该让父进程等待，直到子进程写完才结束。
 
@@ -573,6 +573,11 @@ utput from child
 > * 我实现的同步方式没有使用 `while` 循环包裹 `sigsuspend`，因为我在调用 `sigsuspend` 前，阻塞了除 `SIGUSR1` 和 `SIGUSR2` 外的所有信号，因此挂起的进程不会被除 `SIGUSR1` 和 `SIGUSR2` 外的任何信号唤醒，那么挂起的进程被唤醒的唯一方式就是我们代码中手动 `kill(pid, SIGUSR1/SIGUSR2)` 的场所。
 
 > * 书上的实现显然更合理，在挂起进程等待被指定信号唤醒的时间里，仍然能接收其他信号才是合理的，只不过如果不是我们期待的信号，那么跳不出 `while` 循环，继续被挂起。
+
+> 没想通的点 :
+> * 图 `10-24` 的同步方式为什么要在 `while` 跳出后将 `sigflag` 置为 `0`
+> * 如果将父子进程的最后两句代码 `WAIT_xxx` 和 `TELL_xxx` 删掉，运行程序会出现下面的情况（多运行几次）。
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/8.3.png)
 
 
 ####  8.5&emsp; 在下图程序中，调用 execl，指定 pathname 为解释器文件。如果将其改为调用 execlp，指定 testinterp 的 filename，并且目录 /home/sar/bin 是路径前缀，则 运行该程序时，argv[2] 的打印输出是什么？
