@@ -92,13 +92,13 @@ int main(int argc, char *argv[]) {
         exit(1);
     } else if (pid == 0) {
         WAIT_PARENT();
-        char buf[100];
+        char buf[20];
         memset(buf, 'A', sizeof(buf));
         buf[sizeof(buf) - 1] = 0;
         yh_printf(buf);
         TELL_PARENT(getppid());
     } else {
-        char buf[100];
+        char buf[20];
         memset(buf, 'O', sizeof(buf));
         buf[sizeof(buf) - 1] = 0;
         yh_printf(buf);
