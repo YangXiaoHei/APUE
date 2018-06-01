@@ -592,6 +592,32 @@ utput from child
 
 ####  8.6&emsp; 编写一段程序创建一个僵死进程，然后调用 system 执行 ps(1) 命令以验证该进程是僵死进程。
 
+ [zombie.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_08/review2/zombie.c)
+ 
+ > 运行结果如下：
+ 
+ ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/8.6.png)
+ 
+ > 小贴士：进程的 `R`, `D`, `S`, `T`, `Z`, `X` 各种状态。
+ 
+ > `R` : 可执行状态。
+ 
+ > `D` : 不可中断的睡眠态。在 `linux` 上执行 `vfork` 后父进程进入此种状态，但并不像网上所说的不能被 `kill` 掉（实验版本：`GNU/Linux 3.13.0-36-generic`），在 `Mac` 上执行 `vfork` 后父进程不进入此转台，而是变成 `SN` 状态，需要 `kill` 两次才能杀掉，第一次变成 `S`，同时子进程变僵尸，第二次才能真正 `kill` 掉。
+ 
+ > `S` :  可中断的睡眠态。
+ 
+ > `T` : 暂停状态或跟踪状态
+ 
+ > `Z` : 僵尸态
+ 
+ > `X` : 进程即将被销毁
+ 
+ > `+` : 位于后台进程组
+ 
+ > `N` : 优先级低
+ 
+ > `<` : 优先级高 
+
 ####  8.7&emsp; 8.10 节中提及 POSIX.1 要求在 exec 时关闭打开目录流。按下列方法对此进行验证：对根目录调用 opendir，查看在你系统上实现的 DIR 结构，然后打印执行时关闭标志。接着打开统一目录读并打印执行时关闭标志。
 
 
