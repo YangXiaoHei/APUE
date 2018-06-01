@@ -620,6 +620,17 @@ utput from child
 
 ####  8.7&emsp; 8.10 节中提及 POSIX.1 要求在 exec 时关闭打开目录流。按下列方法对此进行验证：对根目录调用 opendir，查看在你系统上实现的 DIR 结构，然后打印执行时关闭标志。接着打开统一目录读并打印执行时关闭标志。
 
+> DIR 结构体定义如下：
 
+  ![](https://github.com/YangXiaoHei/APUE/blob/master/Image/8.7.1.png)
+  
+> 可以看出，用 `__dd_fd` 可以拿到文件描述符，通过该文件描述符，可以取得文件描述符状态。
 
+ [execlo_on_opendir.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_08/review2/exec_on_open.c)
+ 
+> 执行结果如下
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/8.7.2.png)
+
+> 可以看出，`opendir` 设置了目录文件的 `FD_CLOEXEC` 标志位，而 `open` 并没有这种操作。
 
