@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
     char buf[1024] = { 0 };
     while (1) {
         fputs("input> ", stdout);
-        fflush(stdout);
+        // fflush(stdout);
         if (fgets(buf, sizeof(buf), fp) == NULL) 
             break;
         if (fputs(buf, stdout) == EOF) {
