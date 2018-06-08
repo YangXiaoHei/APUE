@@ -51,8 +51,10 @@ ssize_t readline(int fd, char *buf, long nbytes) {
             *buf++ = c;
             if (c == '\n') break;
         } else if (rc == 0) {
-            if (n != 1) break;
-            return 0;
+            if (n == 1) 
+                return 0;
+            else 
+                break;
         } else
             return -1;
     }
@@ -62,87 +64,85 @@ ssize_t readline(int fd, char *buf, long nbytes) {
 
 int main(int argc, char *argv[]) {
     
-    // if (mkfifo(SERV_FIFO, 0644) < 0 && (errno != EEXIST)) {
-    //     perror("serv mkfifo fifo error");
-    //     exit(1);
-    // }
+    if (mkfifo(SERV_FIFO, 0644) < 0 && (errno != EEXIST)) {
+        perror("serv mkfifo fifo error");
+        exit(1);
+    }
 
     int serv_fifo_read_fd = open(SERV_FIFO, O_RDONLY);
-    // if (serv_fifo_read_fd < 0) {
-    //     perror("serv open read fifo error");
-    //     exit(1);
-    // }
-    // printf("serv open read fifo succ\n");
+    if (serv_fifo_read_fd < 0) {
+        perror("serv open read fifo error");
+        exit(1);
+    }
+    printf("serv open read fifo succ\n");
 
     int serv_fifo_write_fd = open(SERV_FIFO, O_WRONLY);
-    // if (serv_fifo_write_fd < 0) {
-    //     perror("serv open write fifo error");
-    //     exit(1);
-    // }
-    // printf("serv open write fifo succ\n");
+    if (serv_fifo_write_fd < 0) {
+        perror("serv open write fifo error");
+        exit(1);
+    }
+    printf("serv open write fifo succ\n");
 
     long n; 
     char req_buf[4096];
-    // char cli_fifo_path[MAX_IO_BUF_SZ];
-    // char rsp_buf[MAX_IO_BUF_SZ];
+    char cli_fifo_path[MAX_IO_BUF_SZ];
+    char rsp_buf[MAX_IO_BUF_SZ];
     while ((n = readline(serv_fifo_read_fd, req_buf, sizeof(req_buf))) > 0) {
-        // if (req_buf[n - 1] == '\n') 
-        //     n--;
-        // req_buf[n] = 0;
-
+        if (req_buf[n - 1] == '\n') 
+            req_buf[n - 1] = 0;
         printf("serv recv request : %s\n", req_buf);
 
-        // char *handle_file_ptr = strchr(req_buf, ' ');
-        // if (handle_file_ptr == NULL) {
-        //     printf("invalid request : %s\n", req_buf);
-        //     continue;
-        // }
-        // *handle_file_ptr++ = 0;
-        // printf("handle file path is : %s\n", handle_file_ptr);
+        char *handle_file_ptr = strchr(req_buf, ' ');
+        if (handle_file_ptr == NULL) {
+            printf("invalid request : %s\n", req_buf);
+            continue;
+        }
+        *handle_file_ptr++ = 0;
+        printf("handle file path is : %s\n", handle_file_ptr);
 
-        // pid_t pid = atol(req_buf);
-        // if (pid == 0) {
-        //     printf("invalid request : %s\n", req_buf);
-        //     continue;
-        // }
+        pid_t pid = atol(req_buf);
+        if (pid == 0) {
+            printf("invalid request : %s\n", req_buf);
+            continue;
+        }
 
-        // snprintf(cli_fifo_path, sizeof(req_buf), "/tmp/fifo.pid_%ld", (long)pid);
-        // printf("client_fifo_path = %s\n", cli_fifo_path);
-        // int cli_fifo_write_fd = open(cli_fifo_path, O_WRONLY);
-        // if (cli_fifo_write_fd < 0) {
-        //     printf("%s cannot open : %s\n", cli_fifo_path, strerror(errno));
-        //     continue;
-        // }
-        // printf("serv open client write fifo succ\n");
+        snprintf(cli_fifo_path, sizeof(req_buf), "/tmp/fifo.pid_%ld", (long)pid);
+        printf("client_fifo_path = %s\n", cli_fifo_path);
+        int cli_fifo_write_fd = open(cli_fifo_path, O_WRONLY);
+        if (cli_fifo_write_fd < 0) {
+            printf("%s cannot open : %s\n", cli_fifo_path, strerror(errno));
+            continue;
+        }
+        printf("serv open client write fifo succ\n");
 
-        // int fd = open(handle_file_ptr, O_RDONLY);
-        // if (fd < 0) {
-        //     snprintf(rsp_buf, sizeof(rsp_buf), 
-        //         "cannot open %s for request : %s\n",
-        //         handle_file_ptr, req_buf);
-        //     n = strlen(rsp_buf);
-        //     if (write(cli_fifo_write_fd, rsp_buf, n) != n) 
-        //         printf("handle request : %s fail : %s\n", req_buf, strerror(errno));
-        //     close(cli_fifo_write_fd);
-        // } else {
-        //     while (( n = read(fd, rsp_buf, sizeof(rsp_buf))) > 0) {
-        //         if (write(cli_fifo_write_fd, rsp_buf, n) != n) {
-        //             printf("handle request %s fail : %s\n", req_buf, strerror(errno));
-        //             break;
-        //         }
-        //     }
-        //     printf("server handle request finished!\n");
-        //     close(cli_fifo_write_fd);
-        //     close(fd);
-        // }   
+        int fd = open(handle_file_ptr, O_RDONLY);
+        if (fd < 0) {
+            snprintf(rsp_buf, sizeof(rsp_buf), 
+                "cannot open %s for request : %s\n",
+                handle_file_ptr, req_buf);
+            n = strlen(rsp_buf);
+            if (write(cli_fifo_write_fd, rsp_buf, n) != n) 
+                printf("handle request : %s fail : %s\n", req_buf, strerror(errno));
+            close(cli_fifo_write_fd);
+        } else {
+            while (( n = read(fd, rsp_buf, sizeof(rsp_buf))) > 0) {
+                if (write(cli_fifo_write_fd, rsp_buf, n) != n) {
+                    printf("handle request %s fail : %s\n", req_buf, strerror(errno));
+                    break;
+                }
+            }
+            printf("server handle request finished!\n");
+            close(cli_fifo_write_fd);
+            close(fd);
+        }   
     }
-    // if (n < 0) {
-    //     printf("read req_buf fail : %s\n", strerror(errno));
-    //     unlink(SERV_FIFO);
-    // } else {
-    //     printf("unexpected procedure\n");
-    //     unlink(SERV_FIFO);
-    //     abort();
-    // }
+    if (n < 0) {
+        printf("read req_buf fail : %s\n", strerror(errno));
+        unlink(SERV_FIFO);
+    } else {
+        printf("unexpected procedure\n");
+        unlink(SERV_FIFO);
+        abort();
+    }
     return 0;    
 }

@@ -14,10 +14,9 @@ int main(int argc, char *argv[]) {
     
     char buf[1024];
 
-    fgets(buf, sizeof(buf), stdin);
-
     int write_fd = open("./yanghan", O_WRONLY);
 
+    fgets(buf, sizeof(buf), stdin);
     int n = strlen(buf);
     write(write_fd, buf,  n);
     
