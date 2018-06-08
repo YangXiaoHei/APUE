@@ -17,6 +17,7 @@ ssize_t read_for_less_syscall(int fd, char *ptr) {
     static char buf[4096];  /* 预读缓冲区 */
 
     if (read_cnt <= 0) {
+        printf("read_ptr = %s  read_cnt = %ld\n", read_ptr, read_cnt);
 again:
         if ((read_cnt = read(fd, buf, sizeof(buf))) < 0) {
             if (errno == EINTR) /* 如果被信号中断，just retry */
@@ -35,6 +36,7 @@ ssize_t readline(int fd, char *buf, ssize_t maxlen) {
     char c = 0; ssize_t rc = 0;
     char *ptr = buf; int i;
     for (i = 1; i < maxlen; i++) {
+        printf("c = %c, rc = %zd, i = %d\n", c, rc, i);
         if ((rc = read_for_less_syscall(fd, &c)) == 1) {
             *ptr++ = c;
             if (c == '\n') 
