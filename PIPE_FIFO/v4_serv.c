@@ -33,8 +33,8 @@ again:
 
 ssize_t readline(int fd, char *buf, ssize_t maxlen) {
     char c = 0; ssize_t rc = 0;
-    char *ptr = buf;
-    for (int i = 1; i < maxlen; i++) {
+    char *ptr = buf; int i;
+    for (i = 1; i < maxlen; i++) {
         if ((rc = read_for_less_syscall(fd, &c)) == 1) {
             *ptr++ = c;
             if (c == '\n') 
@@ -48,7 +48,7 @@ ssize_t readline(int fd, char *buf, ssize_t maxlen) {
             return -1;
     }
     *ptr = 0;
-    return 0;
+    return i;
 }
 
 #define SERV_FIFO "/tmp/serv.fifo"
@@ -65,11 +65,21 @@ int main(int argc, char *argv[]) {
         perror("open error");
         exit(1);
     }
+    printf("server open serv_fifo read succ\n");
+
+    /*
+     *  服务器的 fifo 是只读打开的，若客户端传完数据后，关闭了该 fifo 的写端
+     *  那么服务器的 read 操作直接返回 0，这显然不是我们要的效果。
+     *  我们要的效果是 ：服务器的 read 一直阻塞，直到有客户端发起连接，传过来数据。处理完后，接着
+     *  阻塞，所以不能依赖于客户端在完成操作后一定不会关闭该 fifo 的写端，想到这里就好办了～
+     *  我们自己打开一个 fifo 写端（虽然从来没使用过它）
+     */
     int dummy_fd = open(SERV_FIFO, O_WRONLY);
     if (dummy_fd < 0) {
         perror("open error");
         exit(1);
     }
+    printf("server open serv_fifo write succ\n");
 
     ssize_t n = 0;
     char buf[1024] = { 0 };
@@ -81,6 +91,8 @@ int main(int argc, char *argv[]) {
         if (buf[n - 1] == '\n') 
             n--;
         buf[n] = 0;
+
+        printf("serv read content : %s\n", buf);
 
         if ((ptr = strchr(buf, ' ')) == NULL) {
             printf("request error\n");
@@ -95,6 +107,8 @@ int main(int argc, char *argv[]) {
             continue;
         }
 
+        printf("serv open %s succ\n", fifo_name);
+
         if ((fd = open(ptr, O_RDONLY)) < 0) {
             snprintf(buf + n, sizeof(buf) - n, ": can't open, %s\n", strerror(errno));
             n = strlen(buf);
@@ -104,6 +118,7 @@ int main(int argc, char *argv[]) {
             }
             close(write_fd);
         } else {
+            printf("serv open %s succ\n", ptr);
 
             while ((n = read(fd, buf, sizeof(buf))) > 0) {
                 if (write(write_fd, buf, n) != n) {
@@ -111,7 +126,17 @@ int main(int argc, char *argv[]) {
                     exit(1);
                 }
             }
+            /*
+             * 如果不关闭 fifo 的写端，那么客户端的 fifo 只读打开时， read 一个空管道会被阻塞
+             */
+            close(write_fd);   
         }
+    }
+    if (n < 0) {
+        perror("readline error\n");
+        exit(1);
+    } else {
+        printf("n = %zd\n", n);
     }
     
     return 0;    
