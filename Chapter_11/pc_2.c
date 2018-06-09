@@ -43,6 +43,7 @@ struct {
 int nitems;
 
 void *producer(void *arg) {
+    int index = *(int *)arg;
     while (1) {
         pthread_mutex_lock(&shared.mutex);
         if (shared.nput >= nitems) {
@@ -56,7 +57,7 @@ void *producer(void *arg) {
         if (condition.nready == 0) 
             pthread_cond_broadcast(&condition.cond);
         condition.nready++;
-        printf("🍎 ----- producer increment nready to %d\n", condition.nready);
+        printf("🍎 ----- producer %d increment nready to %d\n",index, condition.nready);
         pthread_mutex_unlock(&condition.mutex);
 
         *((int *)arg) += 1;
@@ -85,6 +86,7 @@ void *consumer(void *arg) {
         condition.nready--;
         condition.nfinish++;
         printf("consumer %d decrement nready to %d --- 🍇\n", index, condition.nready);
+
         pthread_mutex_unlock(&condition.mutex);
 
         pthread_mutex_lock(&shared.mutex);
@@ -113,10 +115,14 @@ int main(int argc, char *argv[]) {
     int count[MAX_N_THREADS];
 
     int consumer_index[2] = {1, 2};
+    int producer_index[nthreads];
+    for (int i = 0; i < nthreads; i++) {
+        producer_index[i] = i;
+    }
 
     for (int i = 0; i < nthreads; i++) {
         count[i] = 0;
-        if (pthread_create(tid_producer + i, NULL, producer, count + i) != 0) {
+        if (pthread_create(tid_producer + i, NULL, producer, producer_index + i) != 0) {
             printf("pthread_create error");
             exit(1);
         }
