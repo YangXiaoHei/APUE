@@ -21,14 +21,15 @@ struct node {
 struct queue {
     struct node *header;
     struct node *tailer;
-    pthread_mutex_t lock;
     int size;
+    pthread_mutex_t lock;
+    pthread_cond_t cond;
 };
+
+int total;
 
 struct queue *q;
 int nitems;
-
-int total;
 
 void init(void) {
     q = malloc(sizeof(struct queue));
@@ -50,6 +51,7 @@ void init(void) {
     q->tailer->index = -1;
     q->size = 0;
     pthread_mutex_init(&q->lock, NULL);
+    pthread_cond_init(&q->cond, NULL);
 }
 
 int size(void) {
@@ -71,11 +73,14 @@ void enqueue(int *value, int *size) {
     q->tailer->prev->next = newn;
     q->tailer->prev = newn;
     newn->index = ++total;
-    usleep(1000);
     if (value != NULL) 
         *value = total;
+    usleep(1000);
     q->size++;
-    if (size != NULL) *size = q->size;
+    if (size != NULL) 
+        *size = q->size;
+    if (q->size == 1) 
+        pthread_cond_broadcast(&q->cond);
     pthread_mutex_unlock(&q->lock);
 }
 
@@ -88,10 +93,8 @@ int empty(void) {
 
 int dequeue(int *size) {
     pthread_mutex_lock(&q->lock);
-    if (q->size == 0) {
-        pthread_mutex_unlock(&q->lock);
-        return -1;
-    }
+    while (q->size == 0) 
+        pthread_cond_wait(&q->cond, &q->lock);
     struct node *del = q->header->next;
     del->prev->next = del->next;
     del->next->prev = del->prev;
@@ -115,10 +118,9 @@ void *producer(void *arg) {
 
 void *consumer(void *arg) {
     for (int i = 0 ;; i++) {
-        while (empty());
         int size;
         int value = dequeue(&size);
-        printf("consumer get %d, current size %d\n", value, size);
+        printf("consumer get %d, current size %d\n",value, size);
     }
     return NULL;
 }
