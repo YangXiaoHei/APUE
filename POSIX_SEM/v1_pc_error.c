@@ -25,10 +25,6 @@ struct queue {
 };
 
 struct queue *q;
-int nitems;
-
-pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
-int put_cursor;
 
 void init(void) {
     q = malloc(sizeof(struct queue));
@@ -51,15 +47,7 @@ void init(void) {
     q->size = 0;
 }
 
-int size(void) {
-    pthread_mutex_lock(&lock);
-    int s = q->size;
-    pthread_mutex_unlock(&lock);
-    return s;
-}
-
 void enqueue(int value) {
-    pthread_mutex_lock(&lock);
     struct node *newn = malloc(sizeof(struct node));
     if (newn == NULL) {
         printf("malloc error");
@@ -70,48 +58,60 @@ void enqueue(int value) {
     q->tailer->prev->next = newn;
     q->tailer->prev = newn;
     newn->index = value;
-    usleep(1000);
     q->size++;
-    pthread_mutex_unlock(&lock);
 }
 
 int empty(void) {
-    pthread_mutex_lock(&lock);
-    int isempty = q->size == 0;
-    pthread_mutex_unlock(&lock);
-    return isempty;
+    return q->size == 0;
 } 
 
 int dequeue(void) {
-    pthread_mutex_lock(&lock);
-    if (q->size == 0) {
-        pthread_mutex_unlock(&lock);
-        return -1;
-    }
+    if (empty()) return -1;
     struct node *del = q->header->next;
     del->prev->next = del->next;
     del->next->prev = del->prev;
     int value = del->index;
     free(del);
     q->size--;
-    pthread_mutex_unlock(&lock);
     return value;
 }
+
+
+
+int nitems;
+
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+int put_cursor;
 
 void *producer(void *arg) {
     int index = *(int *)arg;
     for (int i = 0 ;; i++) {
+        pthread_mutex_lock(&lock);
         enqueue(++put_cursor);
-        printf("producer %d put %d, current size %d\n",index, put_cursor, size());
+        usleep(1000 * 10);
+        printf("producer %d put %d, current size %d\n",index, put_cursor, q->size);
+        pthread_mutex_unlock(&lock);
     }
     return NULL;
 }
 
+
 void *consumer(void *arg) {
+    int size;
     for (int i = 0 ;; i++) {
-        while (empty());
+        while (1) 
+        {
+            pthread_mutex_lock(&lock);
+            if (i < put_cursor) {
+                size = q->size - 1;
+                pthread_mutex_unlock(&lock);
+                break;
+            }
+            pthread_mutex_unlock(&lock);
+        }
         int value = dequeue();
-        printf("consumer get %d, current size %d\n", value, size());
+        printf("consumer get %d, current size %d\n", value, size);
+        
     }
     return NULL;
 }

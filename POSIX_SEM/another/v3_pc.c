@@ -13,7 +13,7 @@
 #include <semaphore.h>
 
 
-#define CIRCULAR_BUFFER_SIZE 10
+#define CIRCULAR_BUFFER_SIZE 2
 int circular_queue[CIRCULAR_BUFFER_SIZE];
 int tmp;
 
@@ -67,7 +67,7 @@ void *producer(void *arg) {
         cond.size++;
         printf("✅--------producer %d put %d, now left %d\n", index, circular_queue[tmp], cond.size);
 
-        msleep(yh_rand(100, 500));
+        // msleep(yh_rand(100, 500));
 
         if (cond.size == 1) {
             printf("🍁🍁🍁🍁🍁🍁🍁🍁  producer notify all 🍁🍁🍁🍁🍁🍁🍁🍁\n");
@@ -95,7 +95,7 @@ void *consumer(void *arg) {
         cond.get_cursor = (cond.get_cursor + 1) % CIRCULAR_BUFFER_SIZE;
         cond.size--;
 
-        msleep(yh_rand(500, 1000));
+        // msleep(yh_rand(500, 1000));
 
         if (cond.size == CIRCULAR_BUFFER_SIZE - 1) {
             printf("🍁🍁🍁🍁🍁🍁🍁🍁  consumer notify all 🍁🍁🍁🍁🍁🍁🍁🍁\n");
