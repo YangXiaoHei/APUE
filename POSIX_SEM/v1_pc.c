@@ -88,10 +88,6 @@ int empty(void) {
 
 int dequeue(int *size) {
     pthread_mutex_lock(&q->lock);
-    if (q->size == 0) {
-        pthread_mutex_unlock(&q->lock);
-        return -1;
-    }
     struct node *del = q->header->next;
     del->prev->next = del->next;
     del->next->prev = del->prev;
@@ -127,15 +123,21 @@ int main(int argc, char *argv[]) {
     
     init();
 
-    int nthreads = 1;
+    int npros = 1;
+    int ncons = 1;
+    int pros[npros];
+    int cons[ncons];
 
-    pthread_t tid_producer[nthreads], tid_consumer;
-    int pros[5];
-    for (int i = 0; i < nthreads; i++) {
+    pthread_t tid_producer[npros], tid_consumer[ncons];
+    
+    for (int i = 0; i < npros; i++) {
         pros[i] = i;
         pthread_create(tid_producer + i, NULL, producer, pros + i);
     }
-    pthread_create(&tid_consumer, NULL, consumer, NULL);
+    for (int i = 0; i < ncons; i++) {
+        cons[i] = i;
+        pthread_create(tid_consumer + i, NULL, consumer, NULL);    
+    }
 
     alarm(4);
     pause();

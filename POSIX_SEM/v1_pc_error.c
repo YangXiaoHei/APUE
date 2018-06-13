@@ -76,8 +76,6 @@ int dequeue(void) {
     return value;
 }
 
-
-
 int nitems;
 
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
@@ -111,7 +109,6 @@ void *consumer(void *arg) {
         }
         int value = dequeue();
         printf("consumer get %d, current size %d\n", value, size);
-        
     }
     return NULL;
 }
@@ -120,17 +117,23 @@ int main(int argc, char *argv[]) {
     
     init();
 
-    int nthreads = 1;
+    int npros = 1;
+    int ncons = 1;
 
-    pthread_t tid_producer[nthreads], tid_consumer;
-    int pros[5];
-    for (int i = 0; i < nthreads; i++) {
+    int pros[npros];
+    int cons[ncons];
+
+    pthread_t tid_producer[npros], tid_consumer[ncons];
+    for (int i = 0; i < npros; i++) {
         pros[i] = i;
         pthread_create(tid_producer + i, NULL, producer, pros + i);
     }
-    pthread_create(&tid_consumer, NULL, consumer, NULL);
-
-    alarm(2);
+    for (int i = 0; i < ncons; i++) {
+        cons[i] = i;
+        pthread_create(tid_consumer + i, NULL, consumer, cons + i);
+    }
+    
+    alarm(1);
     pause();
     
     return 0;    
