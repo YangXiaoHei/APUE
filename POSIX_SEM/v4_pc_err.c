@@ -148,7 +148,6 @@ int main(int argc, char *argv[]) {
         pthread_create(tid_consumer + i, NULL, consumer, cons + i);
     }
     
-
     alarm(4);
     pause();
     
