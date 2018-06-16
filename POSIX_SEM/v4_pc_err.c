@@ -26,6 +26,7 @@ struct queue {
     pthread_cond_t cond;
 };
 
+
 int total;
 
 struct queue *q;
