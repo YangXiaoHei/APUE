@@ -12,6 +12,7 @@
 #include <pthread.h>
 #include <semaphore.h>
 
+
 struct node {
     int index;
     struct node *next;
