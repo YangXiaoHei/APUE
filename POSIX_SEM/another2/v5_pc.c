@@ -23,7 +23,8 @@ struct queue {
     struct node *tailer;
     int size;
     pthread_mutex_t lock;
-    pthread_cond_t cond;
+    pthread_cond_t empty;
+    pthread_cond_t full;
 };
 
 int total;
@@ -51,7 +52,8 @@ void init(void) {
     q->tailer->index = -1;
     q->size = 0;
     pthread_mutex_init(&q->lock, NULL);
-    pthread_cond_init(&q->cond, NULL);
+    pthread_cond_init(&q->full, NULL);
+    pthread_cond_init(&q->empty, NULL);
 }
 
 int size(void) {
@@ -63,6 +65,8 @@ int size(void) {
 
 void enqueue(int *value, int *size) {
     pthread_mutex_lock(&q->lock);
+    while (q->size >= nitems)
+        pthread_cond_wait(&q->full, &q->lock);
     struct node *newn = malloc(sizeof(struct node));
     if (newn == NULL) {
         printf("malloc error");
@@ -80,7 +84,7 @@ void enqueue(int *value, int *size) {
     if (size != NULL) 
         *size = q->size;
     if (q->size == 1) 
-        pthread_cond_broadcast(&q->cond);
+        pthread_cond_broadcast(&q->empty);
     pthread_mutex_unlock(&q->lock);
 }
 
@@ -94,7 +98,7 @@ int empty(void) {
 int dequeue(int *size) {
     pthread_mutex_lock(&q->lock);
     while (q->size == 0) 
-        pthread_cond_wait(&q->cond, &q->lock);
+        pthread_cond_wait(&q->empty, &q->lock);
     struct node *del = q->header->next;
     del->prev->next = del->next;
     del->next->prev = del->prev;
@@ -102,6 +106,8 @@ int dequeue(int *size) {
     free(del);
     q->size--;
     if (size != NULL) *size = q->size;
+    if (q->size == nitems - 1)
+        pthread_cond_broadcast(&q->full);
     pthread_mutex_unlock(&q->lock);
     return value;
 }
@@ -127,11 +133,17 @@ void *consumer(void *arg) {
 }
 
 int main(int argc, char *argv[]) {
+
+    if (argc != 4) {
+        printf("usage : %s <npros> <ncons> <capacity>\n", argv[0]);
+        exit(1);
+    }
     
     init();
 
-    int npros = 1;
-    int ncons = 3;
+    int npros = atoi(argv[1]);
+    int ncons = atoi(argv[2]);
+    nitems = atoi(argv[3]);
 
     int cons[ncons];
     int pros[npros];

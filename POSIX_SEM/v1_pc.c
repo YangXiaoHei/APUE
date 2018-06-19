@@ -12,121 +12,69 @@
 #include <pthread.h>
 #include <semaphore.h>
 
-struct node {
-    int index;
-    struct node *next;
-    struct node *prev;
-};
-
-struct queue {
-    struct node *header;
-    struct node *tailer;
-    pthread_mutex_t lock;
-    int size;
-};
-
-struct queue *q;
+#define MAX_N_ITEMS 10
 int nitems;
 
-int total;
-
-void init(void) {
-    q = malloc(sizeof(struct queue));
-    if (q == NULL) {
-        printf("malloc error");
-        exit(1);
-    }
-    q->header = malloc(sizeof(struct node));
-    q->tailer = malloc(sizeof(struct node));
-    if (q->header == NULL || q->tailer == NULL) {
-        printf("malloc error");
-        exit(1);
-    }
-    q->header->next = q->tailer;
-    q->tailer->prev = q->header;
-    q->tailer->next = NULL;
-    q->header->prev = NULL;
-    q->header->index = -1;
-    q->tailer->index = -1;
-    q->size = 0;
-    pthread_mutex_init(&q->lock, NULL);
-}
-
-int size(void) {
-    pthread_mutex_lock(&q->lock);
-    int s = q->size;
-    pthread_mutex_unlock(&q->lock);
-    return s;
-}
-
-void enqueue(int *value, int *size) {
-    pthread_mutex_lock(&q->lock);
-    struct node *newn = malloc(sizeof(struct node));
-    if (newn == NULL) {
-        printf("malloc error");
-        exit(1);
-    }
-    newn->next = q->tailer;
-    newn->prev = q->tailer->prev;
-    q->tailer->prev->next = newn;
-    q->tailer->prev = newn;
-    newn->index = ++total;
-    usleep(1000);
-    if (value != NULL) 
-        *value = total;
-    q->size++;
-    if (size != NULL) *size = q->size;
-    pthread_mutex_unlock(&q->lock);
-}
-
-int empty(void) {
-    pthread_mutex_lock(&q->lock);
-    int isempty = q->size == 0;
-    pthread_mutex_unlock(&q->lock);
-    return isempty;
-} 
-
-int dequeue(int *size) {
-    pthread_mutex_lock(&q->lock);
-    struct node *del = q->header->next;
-    del->prev->next = del->next;
-    del->next->prev = del->prev;
-    int value = del->index;
-    free(del);
-    q->size--;
-    if (size != NULL) *size = q->size;
-    pthread_mutex_unlock(&q->lock);
-    return value;
-}
+struct {
+    sem_t *mutex, *nempty, *nstored;
+    int buffer[MAX_N_ITEMS];
+    int seqno;
+    int nput;
+    int nget;
+} shared;
 
 void *producer(void *arg) {
     int index = *(int *)arg;
-    for (int i = 0 ;; i++) {
-        int size, value;
-        enqueue(&value, &size);
-        printf("producer %d put %d, current size %d\n",index, value, size);
+    while (1) {
+        sem_wait(shared.nempty);
+        sem_wait(shared.mutex);
+        shared.buffer[shared.nput++ % MAX_N_ITEMS] = shared.seqno++;
+        printf("producer %d put %d\n", index, shared.buffer[(shared.nput - 1) % MAX_N_ITEMS]);
+        usleep(100000);
+        sem_post(shared.mutex);
+        sem_post(shared.nstored);
     }
+    
     return NULL;
 }
 
 void *consumer(void *arg) {
-    for (int i = 0 ;; i++) {
-        while (empty());
-        int size;
-        int value = dequeue(&size);
-        printf("consumer get %d, current size %d\n", value, size);
+    int index = *(int *)arg;
+    while (1) {
+        sem_wait(shared.nstored);
+        sem_wait(shared.mutex);
+        printf("consumer %d get %d\n", index, shared.buffer[shared.nget++ % MAX_N_ITEMS]);
+        sem_post(shared.mutex);
+        sem_post(shared.nempty);
     }
     return NULL;
 }
 
+#define SEM_NEMPTY  "nempty"
+#define SEM_NSTROED "nstored"
+#define SEM_MUTEX   "mutex"
+
 int main(int argc, char *argv[]) {
     
-    init();
+    if (argc != 4) {
+        printf("usage : %s <npros> <ncons> <capacity>\n", argv[0]);
+        exit(1);
+    }
 
-    int npros = 1;
-    int ncons = 1;
-    int pros[npros];
+    sem_unlink(SEM_MUTEX);
+    sem_unlink(SEM_NSTROED);
+    sem_unlink(SEM_NEMPTY);
+
+    int npros = atoi(argv[1]);
+    int ncons = atoi(argv[2]);
+    nitems = atoi(argv[3]);
+
+    shared.mutex = sem_open(SEM_MUTEX, O_CREAT | O_EXCL, 0644, 1);
+    shared.nstored = sem_open(SEM_NSTROED, O_CREAT | O_EXCL, 0644, 0);
+    shared.nempty = sem_open(SEM_NEMPTY, O_CREAT | O_EXCL, 0644, nitems);
+
     int cons[ncons];
+    int pros[npros];
 
     pthread_t tid_producer[npros], tid_consumer[ncons];
     
@@ -136,8 +84,9 @@ int main(int argc, char *argv[]) {
     }
     for (int i = 0; i < ncons; i++) {
         cons[i] = i;
-        pthread_create(tid_consumer + i, NULL, consumer, NULL);    
+        pthread_create(tid_consumer + i, NULL, consumer, cons + i);
     }
+    
 
     alarm(4);
     pause();
