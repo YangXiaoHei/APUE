@@ -13,6 +13,7 @@
 #include <semaphore.h>
 
 
+
 struct node {
     int index;
     struct node *next;
