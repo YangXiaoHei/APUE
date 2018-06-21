@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 
     int nloop = atoi(argv[2]);
 
-    char *ptr = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    int *ptr = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if (ptr == MAP_FAILED) {
         perror("mmap error");
         exit(1);
@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
     } else if (pid == 0) {
         for (int i = 0; i < nloop; i++) {
             sem_wait(mutex);
-            printf("child %d\n", (*ptr)++);
+            printf("child %d\n", ++(*ptr));
             sem_post(mutex);
         }
         exit(1);
@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < nloop; i++) {
         sem_wait(mutex);
-        printf("parent %d\n", (*ptr)++);
+        printf("parent %d\n", ++(*ptr));
         sem_post(mutex);
     }
 
