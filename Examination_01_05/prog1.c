@@ -1,3 +1,5 @@
+#include "exam_prog1.c"
+
 int main(int argc, char *argv[]) {
 
     char buf[10 << 10] = { 0 };
