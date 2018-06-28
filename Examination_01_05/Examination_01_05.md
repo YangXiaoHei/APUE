@@ -1,7 +1,7 @@
 # ---------------- `APUE` 阶段性检测 -------------
 * **检测范围: Chapter 1 ~ Chapter 5**
 
-* **题型：填空题、画图题、编程题、实验探究题**
+* **题型：填空题、画图题、代码分析题、编程题、实验探究题**
 
 * **试卷满分：300分**
 ****
@@ -22,12 +22,11 @@
 9. 分别解释下列标志位的作用：`O_EXCL`，`O_APPEND`，`O_TRUNC`，
 `O_SYNC`，`O_DSYNC`，`O_NONFOLLOW` ______________________________
 10. 描述两种获取文件大小的方式 ______________________________________
-11. 列举使 `read` 返回字节数小于 `0` 的情况（至少列举一种）_____________
-12. 列举使 `read` 返回字节数小于应读取字节数的情况（至少列举两种）________
 15. `creat` 相当于调用 `open(file_path`, _______, `flags)`
 16. 对于 `read` 和 `write` 缓冲区尺寸的选取，最恰当的选择是 ____________ 
 17. 列举所有文件类型和判断该类型的宏，并分别对其作一定的介绍或阐述其用途 ____
-18. 尽可能多的列举 `struct stat` 中的字段，并分别对其作一些介绍 _________
+18. 列举 `struct stat` 中至少 7 个字段，并分别对每个字段作一定的介绍 ____________
+19. `fgets()` 在出错时返回 _______，在读到文件末尾时返回 __________，`fputs()` 在出错时返回 ________，在成功时返回 _________，因为 ____________，所以需要使用 `feof()` 和 `ferror()` 来区分 ______
 
 ### 二、画图题
 > 要求：画出`进程表项`，`文件表项`和 `v节点表项`以及 `i节点`，并用有方向的箭头绘制出它们之间的逻辑关系。
@@ -39,9 +38,105 @@
 5. 画出 `./a.out 2>&1 > outfile` 命令在执行期间的一系列内核数据结构变化（假设在此期间该进程没有打开任何文件）。
 
 -
-### 三、编程题（80分）
+### 三、分析题
 
-1、 实现下列代码中所需的宏函数 `LOG(format, ...)` ，并将其编写在文件 `exam_prog1.c` 中，按如下所示导入头文件，编译运行程序，完成如图所示的输出。 
+##### 1、执行如下代码将在终端上输出什么？为什么？
+
+```C
+1|  int main() {
+2|     printf("hello world");
+3|     _exit(0);
+4|  }
+```
+
+##### 2、在第 1 题的基础上添加一行代码后如下所示，执行后将在终端输出什么？为什么？
+
+```C
+1|  int main() {
+2|     setbuf(stdout, NULL);
+3|     printf("hello world");
+4|     _exit(0);
+5|  }
+```
+
+##### 3、在第 2 题的基础上修改代码后如下所示，执行后将在终端输出什么？为什么？
+
+```C
+1|  int main() {
+2|	   char buf[11] = { 0 };
+3|     setbuf(stdout, buf);
+4|     printf("hello world");
+5|     _exit(0);
+6|  }
+```
+
+##### 4、在第 3 题的基础上修改代码后如下所示，执行后将在终端输出什么？为什么？
+
+```C
+1|  int main() {
+2|	   char buf[11] = { 0 };
+3|     setvbuf(stdout, buf, _IOFBF, sizeof(buf));
+4|     printf("hello world");
+5|     _exit(0);
+6|  }
+```
+
+##### 5、在第 3 题的基础上修改代码后如下所示，执行后将在终端输出什么？为什么？
+
+```C
+1|  int main() {
+2|	   char buf[12] = { 0 };
+3|     setvbuf(stdout, buf, _IOFBF, sizeof(buf));
+4|     printf("hello world");
+5|     return 0;
+6|  }
+```
+
+
+##### 6、首先执行如下代码： 
+
+```C
+1|  unsigned char str[] = { 'a', 'b', 'c', 0, 'e', 0, 'g', '\n', 'i', 'j', 'k', 0};
+2|  int fd = open("test_file", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+3|  write(fd, str, sizeof(str));
+4|  close(fd);
+```
+##### （1）写出文件 `test_file` 的大小和此时的内容。
+
+##### 假设有如下函数定义
+
+```C
+5|  void printbuf(char *buf, int size) {
+6|     for (int i = 0; i < size; i++) 
+7|        printf("%c", buf[i] == 0 ? '@' : buf[i] == '\n' ? '~' : buf[i]);
+8|     printf("\n");
+9|  }
+```
+
+##### 接下来执行如下代码：
+
+```C
+10|  FILE *fp = fopen("test_file", "r");
+11|  char fp_buf[9] = { 0 };
+12|  setvbuf(fp, fp_buf, _IOFBF, sizeof(fp_buf));
+13|  char buf[4] = { 0 };
+14|  while (fgets(buf, sizeof(buf), fp) != NULL) {
+
+		  #1
+15|      printbuf((char *)fp->_bf._base, fp->_bf._size);
+    
+    	  #2
+16|      printbuf(buf, sizeof(buf));
+17|  }
+```
+
+##### （2）写出每次迭代中 `#1` 和 `#2` 打印的内容。
+
+
+-
+### 四、编程题（80分）
+
+##### 1、 实现下列代码中所需的宏函数 `LOG(format, ...)` ，并将其编写在文件 `exam_prog1.c` 中，按如下所示导入头文件，编译运行程序，完成如图所示的输出。 
 
 ```C
 #include "exam_prog1.c"
@@ -62,11 +157,14 @@ int main(int argc, char *argv[]) {
     _exit(0);    
 }
 ```
+##### 该程序产生如下终端输出：
 
-***输出如下***
-![](/Users/bot/Desktop/APUE/APUE/APUE_Examination_01_05/pro1.input.png)
+```C
+➜ Good morning, I'm Hanson, and I live in Shenzheng, Nice to meet you 
+```
 
-2、使用 `dup(int fd)` 实现 `my_dup2(int fd)` 函数，并将其编写在文件 `exam_prog2.c` 中，按如下方式导入头文件，编译运行程序，完成如图所示的输出。
+
+##### 2、使用 `dup(int fd)` 实现 `my_dup2(int fd)` 函数，并将其编写在文件 `exam_prog2.c` 中，按如下方式导入头文件，编译运行程序，完成如图所示的输出。
 
 ```C
 #include "exam_prog2.c"
@@ -102,14 +200,41 @@ int main(int argc, char *argv[]) {
 }
 ```
 
-![](/Users/bot/Desktop/APUE/APUE/APUE_Examination_01_05/prog2.input.png )
+##### 3、编写程序 `myftw.c`， 该程序的功能是：从一个起始目录开始，统计此目录下各种文件的数目。编译运行该程序，将 `\` 作为命令行参数传入，给出终端输出以及该 `myftw.c` 文件作为测试解答提交（下面给出该程序的一些输出示例）。
+
+```C
+➜ ./myftw 
+usage : ./myftw <beg_file_path>
+
+➜ ./myftw /
+/usr/sbin/authserver/ open dir fail : Permission denied
+/usr/local/openfire/ open dir fail : Permission denied
+^C
+【操作被打断！】
+目录 : 8196
+普通文件 : 77698
+fifo : 0
+socket : 0
+块特殊设备 : 0
+字符特殊设备 : 0
+符号链接 : 5879
+
+➜ ./myftw ~/Desktop 
+目录 : 8678
+普通文件 : 65503
+fifo : 3
+socket : 0
+块特殊设备 : 0
+字符特殊设备 : 0
+符号链接 : 101
+```  
 
 ### 四、实验探究题（80分）
 
 > 下面各题均需提交完整可编译运行的代码文件。
 
-1. 列举三种使 `write(...)` 调用返回 `-1` 的情形，同时列举一种使 `write(...)` 的返回值不等于需写入字节数的情形。分别用代码构建上述四种场景，编译运行程序，给出用户友好的输出提示，将代码文件命名为 `write_neg_return.c` 作为测试解答提交。
-2. 列举三种使 `read(...)` 调用返回 `-1` 的情形，列举两种使 `read(...)` 返回 `0` 的情形。分别用代码构建上述五种场景，编译运行程序，给出用户友好的输出提示，将代码文件命名为 `read_neg_return.c` 和 `read_zero_return.c` 作为测试解答提交。
+##### 1. 列举三种使 `write(...)` 调用返回 `-1` 的情形，同时列举一种使 `write(...)` 的返回值不等于需写入字节数的情形。分别用代码构建上述四种场景，编译运行程序，给出用户友好的输出提示，将代码文件命名为 `write_neg_return.c` 作为测试解答提交。
+##### 2. 列举三种使 `read(...)` 调用返回 `-1` 的情形，列举两种使 `read(...)` 返回 `0` 的情形。分别用代码构建上述五种场景，编译运行程序，给出用户友好的输出提示，将代码文件命名为 `read_neg_return.c` 和 `read_zero_return.c` 作为测试解答提交。
 
 
 
