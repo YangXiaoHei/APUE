@@ -215,7 +215,7 @@ int setvbuf(FILE *fp, char buf, int mode, size_t size)
 ```C
 int main() {
    setbuf(stdout, NULL);
-   printf("%s", buf);
+   printf("hello world");
    _exit(0);
 }
 ```
@@ -272,7 +272,7 @@ int main() {
     char buf[BUFSIZ] = { 0 };
     setbuf(stdout, buf);
     char msg[BUFSIZ + 1] = { 0 };
-    memset(msg, 'a', sizeof(msg) - 1);
+    memset(msg, 'a', BUFSIZ);
     printf("%s", msg)
     _exit(0);
 }
