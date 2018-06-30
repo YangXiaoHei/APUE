@@ -16,7 +16,7 @@
 #include <mqueue.h>
 #endif
 
-void printf_buf(unsigned char *buf, int size, const char *msg) {
+void print_buf(unsigned char *buf, int size, const char *msg) {
     printf("%s : ", msg);
     for (int i = 0; i < size; i++) 
         printf("%c", buf[i] == 0 ? '@' : buf[i] == '\n' ? '~' : buf[i]);
