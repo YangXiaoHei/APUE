@@ -330,19 +330,63 @@ int yh_mq_setattr(yh_mqd_t mqd, struct yh_mq_attr *new_mqattr, yh_mq_attr *old_m
         return -1;
     }
     if (old_mqattr != NULL) {
-        old_mqattr->mq_flags = mqinfo->mq_flags;
-        old_mqattr->mq_curmsgs = attr->mq_curmsgs;
-        old_mqattr->mq_maxmsg = attr->mq_maxmsg;
-        old_mqattr->mq_msgsize = attr->mq_msgsize;
+        old_mqattr->mq_flags    = mqinfo->mq_flags;
+        old_mqattr->mq_curmsgs  = attr->mq_curmsgs;
+        old_mqattr->mq_maxmsg   = attr->mq_maxmsg;
+        old_mqattr->mq_msgsize  = attr->mq_msgsize;
     }
     if (new_mqattr != NULL) {
-        
+        attr->mq_flags      = mqinfo->mq_flags;
+        attr->mq_curmsgs    = new_mqattr->mq_curmsgs;
+        attr->mq_maxmsg     = new_mqattr->mq_maxmsg;
+        attr->mq_msgsize    = new_mqattr->mq_msgsize;
     }
     pthread_mutex_unlock(&mqhdr->mqh_lock);
     return 0;
 }
-int yh_mq_notify(yh_mqd_t mqd, const struct sigevent *notification);
-int yh_mq_send(yh_mqd_t mqd, const char *ptr, size_t len, unsigned int prio);
+int yh_mq_notify(yh_mqd_t mqd, const struct sigevent *notification) {
+
+    int     n;
+    pid_t   pid;
+    struct yh_mq_hdr    *mqhdr;
+    struct yh_mq_info   *mqinfo;
+
+    mqinfo = mqd;
+    if (mqinfo->mqi_magic != MQI_MAGIC) {
+        errno = EBADF;
+        return -1;
+    }
+
+    mqhdr = mqinfo->mqi_hdr;
+    if ( (n = pthread_mutex_lock(&mqhdr->mqh_lock)) != 0) {
+        errno = n;
+        return -1;
+    }
+
+    pid = getpid();
+    if (notification == NULL) {
+        if (mqhdr->mqh_pid == pid) 
+            mqhdr->mqh_pid = 0;
+    } else {
+        if (mqhdr->mqh_pid != 0) {
+            if (kill(mqhdr->mqh_pid, 0) != -1 || errno != ESRCH) {
+                errno = EBUSY;
+                goto err;
+            }
+        }
+        mqhdr->mqh_pid = pid;
+        mqhdr->mqh_event = *notification;
+    }
+    pthread_mutex_unlock(&mqhdr->mqh_lock);
+    return 0;
+}
+int yh_mq_send(yh_mqd_t mqd, const char *ptr, size_t len, unsigned int prio) {
+
+    int     n;
+    long    index, freeindex;
+    char    *mptr;
+
+}
 int yh_mq_receive(yh_mqd_t mqd, char *ptr, size_t maxlen, unsigned int *prio);
 
 
