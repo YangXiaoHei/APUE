@@ -385,6 +385,66 @@ int yh_mq_send(yh_mqd_t mqd, const char *ptr, size_t len, unsigned int prio) {
     int     n;
     long    index, freeindex;
     char    *mptr;
+    struct sigevent *sigev;
+    struct yh_mq_hdr *mqhdr;
+    struct yh_mq_attr *attr;
+    struct yh_msg_hdr *msghdr, *nmsghdr, *pmsghdr;
+    struct yh_mq_info *mqinfo;
+
+    mqinfo = mqd;
+    if (mqinfo->mqi_magic != MQI_MAGIC) {
+        errno = EBADF;
+        return -1;
+    }
+
+    mqhdr = mqinfo->mqi_hdr;
+    mptr = (char *)mqhdr;
+    attr = &mqhdr->mqh_attr;
+    if ( (n = pthread_mutex_lock(&mqhdr->mqh_lock)) != 0) {
+        errno = n;
+        return -1;
+    }
+
+    if ( (len > attr->mq_msgsize)) {
+        errno = EMSGSIZE;
+        goto err;
+    }
+
+    if (attr->mq_curmsgs == 0) {
+        if (mqhdr->mqh_pid != 0 && mqhdr->mqh_nwait == 0) {
+            sigev = &mqhdr->mqh_event;
+            if (sigev->sigev_notify == SIGEV_SIGNAL) {
+                sigqueue(mqhdr->mqh_pid, sigev->sigev_signo, sigev->sigev_value);
+            }
+            mqhdr->mqh_pid = 0;
+        }
+    } else if (attr->mq_curmsgs >= attr->mq_maxmsg) {
+        if (mqinfo->mqi_flags & O_NONBLOCK) {
+            errno = EAGAIN;
+            goto err;
+        }
+
+        while (attr->mq_curmsgs >= attr->mq_maxmsg)
+            pthread_cond_wait(&mqhdr->mqh_wait, &mqhdr->mqh_lock);
+    }
+
+    nmsghdr = (struct yh_msg_hdr *)&mptr[freeindex];
+    nmsghdr->msg_prio = prio;
+    nmsghdr->msg_len = len;
+    memcpy(nmsghdr + 1, ptr, len);
+    mqhdr->mqh_free = nmsghdr->msg_next;
+
+    index = mqhdr->mqh_head;
+    pmsghdr = (struct yh_msg_hdr)&mptr[index];
+
+    while (index != 0) {
+        msghdr = (struct yh_msg_hdr *)&mptr[index];
+        if (prio > msghdr->msg_prio) {
+            nmsghdr->msg_next = index;
+            pmsghdr->msg_next = freeindex;
+            break;
+        }
+    }
 
 }
 int yh_mq_receive(yh_mqd_t mqd, char *ptr, size_t maxlen, unsigned int *prio);
