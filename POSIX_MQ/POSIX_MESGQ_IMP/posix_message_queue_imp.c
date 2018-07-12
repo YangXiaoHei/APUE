@@ -444,10 +444,89 @@ int yh_mq_send(yh_mqd_t mqd, const char *ptr, size_t len, unsigned int prio) {
             pmsghdr->msg_next = freeindex;
             break;
         }
+        index = msghdr->msg_next;
+        pmsghdr = msghdr;
     }
 
+    if (index == 0) {
+        pmsghdr->msg_next = freeindex;
+        nmsghdr->msg_next = 0;
+    }
+
+    if (attr->mq_curmsgs == 0)
+        pthread_cond_signal(&mqhdr->mqh_wait);
+    attr->mq_curmsgs++;
+
+err:
+    pthread_mutex_unlock(&mqhdr->mqh_lock);
+    return 0;
+
 }
-int yh_mq_receive(yh_mqd_t mqd, char *ptr, size_t maxlen, unsigned int *prio);
+int yh_mq_receive(yh_mqd_t mqd, char *ptr, size_t maxlen, unsigned int *prio) {
+
+    int     n;
+    long    index;
+    char    *mptr;
+    ssize_t len;
+    struct yh_mq_hdr    *mqhdr;
+    struct yh_mq_attr   *attr;
+    struct yh_msg_hdr   *msghdr;
+    struct yh_mq_info   *mqinfo;
+
+    mqinfo = mqd;
+    if (mqinfo->mqi_magic != MQI_MAGIC) {
+        errno = EBADF;
+        return -1;
+    }
+
+    mqhdr = mqinfo->mqi_hdr;
+    mptr = (char *)mqhdr;
+    attr = &mqhdr->mqh_attr;
+    if ( (n = pthread_mutex_lock(&mqhdr->mqh_lock)) != 0) {
+        errno = n;
+        goto err;
+    }
+
+    if (maxlen < attr->mq_msgsize) {
+        errno = EMSGSIZE;
+        goto err;
+    }
+
+    if (attr->mq_curmsgs == 0) {
+        if (mqinfo->mqi_flags & O_NONBLOCK) {
+            errno = EAGAIN;
+            goto err;
+        }
+        mqhdr->mqh_wait++;
+        while (attr->mq_curmsgs == 0) 
+            pthread_cond_wait(&mqhdr->mqh_wait, &mqhdr->mqh_lock);
+        mqhdr->mqh_nwait--;
+    }
+
+    if ( (index = mqhdr->mqh_head) == 0) 
+        exit(1);
+
+    msghdr = (struct yh_msg_hdr *) &mptr[index];
+    mqhdr->mqh_head = msghdr->msg_next;
+    len = msghdr->msg_len;
+    memcpy(ptr, msghdr + 1, len);
+    if (prio != NULL) 
+        *prio = msghdr->msg_prio;
+    
+    msghdr->msg_next = mqhdr->mqh_free;
+    mqhdr->mqh_free = index;
+
+    if (attr->mq_curmsgs == attr->mq_maxmsg)
+        pthread_cond_signal(&mqhdr->mqh_wait);
+    attr->mq_curmsgs--;
+
+    pthread_mutex_unlock(&mqhdr->mqh_lock);
+    return len;
+
+err:
+    pthread_mutex_unlock(&mqhdr->mqh_lock);
+    return -1;
+}
 
 
 
