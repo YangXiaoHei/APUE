@@ -437,6 +437,7 @@ int yh_mq_send(yh_mqd_t mqd, const char *ptr, size_t len, unsigned int prio) {
     index = mqhdr->mqh_head;
     pmsghdr = (struct yh_msg_hdr)&mptr[index];
 
+
     while (index != 0) {
         msghdr = (struct yh_msg_hdr *)&mptr[index];
         if (prio > msghdr->msg_prio) {
