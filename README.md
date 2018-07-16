@@ -650,7 +650,11 @@ utput from child
 
 ####  9.2&emsp; 编写一段程序调用 fork 并使子进程建立一个新的会话。验证子进程变成了进程组组长且不再有控制终端。
 
+运行代码 [fork.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_09/review/fork.c)  然后执行 shell 命令得到下面的输出。
 
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/9.2.png)
+
+从中可以看出，第一行的 ./fork 是第二行的子进程，它的 group ID 等于 Process ID，这代表它是一个进程组的组长，并且它的控制终端显示未 ??，这表示它不再有控制终端。
 
 
 
