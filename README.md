@@ -665,13 +665,7 @@ utput from child
 
 ####  10.2&emsp; 实现 10.22 节中说明的 sig2str 函数。
 
-[sig2str.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_10/review/sig2str.c)
-
 ####  10.3&emsp; 画出运行图 10-9 程序时的栈帧情况。
-
-> 如下图所示
-
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/1.3.png)
 
 ####  10.4&emsp; 图 10-11 程序中利用 setjmp 和 longjmp 设置 I/O 操作的超时，下面的代码也常见用于此种目的：
 
@@ -703,6 +697,11 @@ if (setjmp(env_alrm) != 0) {
 ~~~
 
 ####  10.5&emsp; 仅使用一个定时器（alarm 或较高精度的 setitimer)，构造一组函数，使得进程在该单一定时器基础上可以设置任意数量的定时器。
+
+####  10.6&emsp; 编写一段程序测试图 10-24 中父进程和子进程的同步函数，要求进程创建一个文件并向文件写一个整数 0，然后，进程调用 fork ，接着，父进程和子进程交替增加文件中的计数器值，每次计数器值增加 1 时，打印是哪一个进程（子进程或父进程）进行了该增加 1 操作。
+
+
+
 
 
 
