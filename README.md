@@ -665,7 +665,13 @@ utput from child
 
 ####  10.2&emsp; 实现 10.22 节中说明的 sig2str 函数。
 
+[sig2str.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_10/review/sig2str.c)
+
 ####  10.3&emsp; 画出运行图 10-9 程序时的栈帧情况。
+
+> 如下图所示
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/1.3.png)
 
 ####  10.4&emsp; 图 10-11 程序中利用 setjmp 和 longjmp 设置 I/O 操作的超时，下面的代码也常见用于此种目的：
 
