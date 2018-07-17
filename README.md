@@ -657,4 +657,59 @@ utput from child
 从中可以看出，第一行的 ./fork 是第二行的子进程，它的 group ID 等于 Process ID，这代表它是一个进程组的组长，并且它的控制终端显示未 ??，这表示它不再有控制终端。
 
 
+# Chapter_10
+
+####  10.1&emsp; 删除图 10-2 程序中的 for(;;) 语句，结果会怎样？为什么？
+
+> 删掉 for(;;) 后，当程序在阻塞中接收到一个信号后，执行完信号不捕获函数就退出，因为 `pause` 的阻塞效果只执行了一次，它接收到信号就被中断。
+
+####  10.2&emsp; 实现 10.22 节中说明的 sig2str 函数。
+
+####  10.3&emsp; 画出运行图 10-9 程序时的栈帧情况。
+
+####  10.4&emsp; 图 10-11 程序中利用 setjmp 和 longjmp 设置 I/O 操作的超时，下面的代码也常见用于此种目的：
+
+~~~C
+signal(SIGALRM, sig_arlm);
+alarm(60);
+if (setjmp(env_alrm) != 0) {
+	/* handle timeout */
+}
+~~~
+
+> `alarm` 和 `setjmp` 之间存在时间窗口，如果在此期间被内核阻塞，`SIGALRM` 信号发送过来时，仍然没有调用过 `setjmp` 完成 `env_alrm` 的初始化，那么其行为是未定义的，改进的方式如下：
+
+~~~C
+signal(SIGALRM, sig_arlm);
+sigset_t new_mask, old_mask;
+sigemptyset(&new_mask);
+sigaddset(&new_mask, SIGALRM);
+
+/* 阻塞 SIGALRM */
+sigprocmask(SIG_BLOCK, &new_mask, &old_mask);
+alarm(60);
+if (setjmp(env_alrm) != 0) {
+
+	/* 解除阻塞 SIGALRM */
+	sigprocmask(SIG_SETMASK, &old_mask, NULL);
+	/* handle timeout */
+}s
+~~~
+
+####  10.5&emsp; 仅使用一个定时器（alarm 或较高精度的 setitimer)，构造一组函数，使得进程在该单一定时器基础上可以设置任意数量的定时器。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
