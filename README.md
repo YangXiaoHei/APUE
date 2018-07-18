@@ -712,11 +712,13 @@ if (setjmp(env_alrm) != 0) {
 
 ####  10.8&emsp; 为什么在 siginfo 结构的 si_uid 字段中包括实际用户 ID 而非有效用户 ID。
 
-####  10.9&emsp; 编写一段程序，要求在一个无限循环中调用 sleep(60) 函数，每 5 分钟（即 5 次循环）取当前的日期和时间，并打印 tm_sec 字段。将程序执行一个晚上，请解释其结果。有些程序，如 cron 守护进程，每分钟运行一次，它是如何处理这类工作的？
+####  10.9&emsp; 重写下图函数，要求它能处理 10-1 中的所有信号，每次循环处理当前信号屏蔽字中的每一个信号。
 
+[pr_mask.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_09/review/pr_mask.c) 
 
-####  10.10&emsp; 重写下图函数，要求它能处理 10-1 中的所有信号，每次循环处理当前信号屏蔽字中的每一个信号。
+####  10.10&emsp; 编写一段程序，要求在一个无限循环中调用 sleep(60) 函数，每 5 分钟（即 5 次循环）取当前的日期和时间，并打印 tm_sec 字段。将程序执行一个晚上，请解释其结果。有些程序，如 cron 守护进程，每分钟运行一次，它是如何处理这类工作的？
 
+[time.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_09/review/time.c) 
 
 
 
