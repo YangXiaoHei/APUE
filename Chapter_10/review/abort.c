@@ -18,7 +18,7 @@
 #include <mqueue.h>
 #endif
 
-void abort(void) {
+void yh_abort(void) {
 
     sigset_t mask;
     struct sigaction action;
@@ -69,9 +69,8 @@ int main(int argc, char const *argv[])
         exit(1);
     }
 
+    yh_abort();
+    // abort();
 
-
-
-    
     return 0;
 }
