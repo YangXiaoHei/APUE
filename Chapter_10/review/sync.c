@@ -83,7 +83,7 @@ int main(int argc, char const *argv[])
         exit(1);
     } else if (pid == 0) {
         int num;
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 6; i++) {
             
             int rt = read(fd, &num, 4);
             lseek(fd, 0, SEEK_SET);
@@ -102,7 +102,7 @@ int main(int argc, char const *argv[])
     int num;
 
     WAIT_CHILD();
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 6; i++) {
 
         int rt = read(fd, &num, 4);
         lseek(fd, 0, SEEK_SET);
