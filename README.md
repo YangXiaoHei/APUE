@@ -714,22 +714,25 @@ if (setjmp(env_alrm) != 0) {
 
 ####  10.9&emsp; 重写下图函数，要求它能处理 10-1 中的所有信号，每次循环处理当前信号屏蔽字中的每一个信号。
 
-[pr_mask.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_09/review/pr_mask.c) 
+[pr_mask.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_10/review/pr_mask.c) 
 
 ####  10.10&emsp; 编写一段程序，要求在一个无限循环中调用 sleep(60) 函数，每 5 分钟（即 5 次循环）取当前的日期和时间，并打印 tm_sec 字段。将程序执行一个晚上，请解释其结果。有些程序，如 cron 守护进程，每分钟运行一次，它是如何处理这类工作的？
 
-[time.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_09/review/time.c) 
+[time.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_10/review/time.c) 
 
-####  10.10&emsp; 修改图 3-5 的程序：要求：（a）将 BUFFSIZE 改为 100；（b）用  signal_inter 函数捕捉 SIGXFSZ 信号量并打印消息，然后从信号处理程序中返回；（c）如果没有写满请求的字节数，则打印 write 的返回值，将软资源 RLIMIT_FSIZE 更改为 1024 字节，然后复制一个大于 1024 字节的文件，在各种不同的系统上运行新程序，其结果如何？为什么？
+####  10.11&emsp; 修改图 3-5 的程序：要求：（a）将 BUFFSIZE 改为 100；（b）用  signal_inter 函数捕捉 SIGXFSZ 信号量并打印消息，然后从信号处理程序中返回；（c）如果没有写满请求的字节数，则打印 write 的返回值，将软资源 RLIMIT_FSIZE 更改为 1024 字节，然后复制一个大于 1024 字节的文件，在各种不同的系统上运行新程序，其结果如何？为什么？
 
-####  10.10&emsp; 编写一段调用 fwrite 的程序，它使用一个较大的缓冲区（约1GB），然后 fwrite 前调用 alarm 使得 1s 后产生信号。在信号处理程序中打印捕捉到的信号，然后返回。 fwrite 可以完成吗？结果如何？
+[sigxfsz.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_10/review/sigxfsz.c) 
 
+####  10.12&emsp; 编写一段调用 fwrite 的程序，它使用一个较大的缓冲区（约1GB），然后 fwrite 前调用 alarm 使得 1s 后产生信号。在信号处理程序中打印捕捉到的信号，然后返回。 fwrite 可以完成吗？结果如何？
 
+[fwrite.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_10/review/fwrite.c) 
 
 # Chapter_11
 
 ####  11.1&emsp; 修改图 11-4 所示的实例代码，正确地在两个线程之间传递结构。
 
+[struct.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_11/review/struct.c) 
 
 
 
