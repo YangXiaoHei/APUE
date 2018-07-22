@@ -756,6 +756,8 @@ if (setjmp(env_alrm) != 0) {
 > 可以使用 `pthread_cond_wait` 、`pthread_cond_broadcast` 和 `pthread_mutex_lock` 结合实现，每个线程调用 `pthread_barrier_wait` 时，加锁递减一个条件变量的值，并检查是否等于 0，若不等于，就 `pthread_cond_wait`，若等于 0，那么 `pthread_cond_broadcast`。
 
 
+
+
 # Chapter_12
 
 ####  12.1&emsp; 在 Linux 系统中运行下图程序，但把输出结果重定向到一个文件中，并解释结果。
