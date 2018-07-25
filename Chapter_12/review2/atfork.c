@@ -85,6 +85,7 @@ int main(int argc, char const *argv[])
 
     sleep(2);
     printf("parent about to fork...\n");
+    
 
     if ((pid = fork()) < 0) {
         perror("fork error");
