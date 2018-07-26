@@ -29,6 +29,18 @@ void display_environ(char **env)
     printf("--------------------\n");
 }
 
+pthread_once_t init_done = PTHREAD_ONCE_INIT;
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+
+void thread_init()
+{
+    pthread_mutexattr_t attr;
+    pthread_mutexattr_init(&attr);
+    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+    pthread_mutex_init(&lock, &attr);
+    pthread_mutexattr_destroy(&attr);
+}
+
 int yh_putenv(char *str) 
 {
     char * eqloc;
@@ -43,6 +55,9 @@ int yh_putenv(char *str)
     nname_len = eqloc - str;
     eqloc++;
     nval_len = strlen(eqloc);
+
+    pthread_once(&init_done, thread_init);
+    pthread_mutex_lock(&lock);
 
     for (i = 0; environ[i] != NULL; i++)
     {
@@ -63,6 +78,7 @@ int yh_putenv(char *str)
                     return ENOSPC;
                 strcpy(environ[i], str);
             }
+            pthread_mutex_unlock(&lock);
             return 0;
         }
     }
@@ -100,6 +116,7 @@ int yh_putenv(char *str)
 
         environ = new_environ;
     }
+    pthread_mutex_unlock(&lock);
     return 0;
 
 malloc_err_3:
@@ -107,6 +124,7 @@ malloc_err_3:
 malloc_err_2:
     free(testp);
 malloc_err_1:
+    pthread_mutex_unlock(&lock);
     return ENOSPC;
 }
 
