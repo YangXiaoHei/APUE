@@ -772,7 +772,11 @@ parent unlocking locks..."
 
 > 先实现一个线程安全但不可重入版本的 `putenv`，思路是：如果 `name=value` 中的 `name` 已经存在，那么判断 `new_value` 的长度是否小于或等于原来 `value` 的长度，如果是那么直接覆盖，否则就在堆上分配内存，然后将地址交给 `environ`；如果 `name` 不存在，那么直接在堆上为 `environ` 中的所有指针分配内存，如果已经在堆上分配过内存（不是第一次插入新的 `name`），那么直接 `realloc`，然后再为新的 `name=value` 串在堆上分配内存。
 
+[putenv.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_12/review2/putenv.c) 
+
 > 上述实现之所以不是异步信号安全，是因为使用了 `malloc` 函数，为了避免在函数内部调用 `malloc` 从而实现可重入的函数，将新内存分配任务交给调用者，实现如下。
+
+[putenv_r.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_12/review2/putenv_r.c)
 
 ####  12.3&emsp; 是否可以通过在 getenv 函数开始的时候阻塞信号，并在 getevn 函数返回之前回复原来的信号屏蔽字这种方法，让下图的 getenv 函数变成异步信号安全的？解释其原因
 
@@ -787,6 +791,8 @@ parent unlocking locks..."
 ####  12.6&emsp; 重新实现下图的程序，在不使用 nanosleep 或 clock_nanosleep 的情况下使它成为线程安全的。
 
 > `select` 是一个线程安全函数，而且可以阻塞线程到指定的时间流逝，因此使用该函数即可完成 `sleep` 的功能。`select` 返回 0 代表指定的时间流逝，如果返回非 0，又因为我们没有监听任何文件描述符的可读可写和异常事件，因此可能是被其他信号中断，此时记录下总共睡眠的时间，然后返回未睡够的时间即可。
+
+[sleep_thread_safe.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_12/review2/sleep_thread_safe.c) 
 
 ####  12.7&emsp; 调用 fork 以后，是否可以通过首先用 pthread_cond_destroy 销毁条件变量，然后用 pthread_cond_init 初始化条件变量这种方法安全地在子进程中对条件变量重新初始化？
 
