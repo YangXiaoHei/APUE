@@ -825,11 +825,36 @@ parent unlocking locks..."
 
 > 我所在的系统中，在写锁阻塞的情况下不断加读锁，的确会使写锁饿死，测试程序如下：
 
+[hunger.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_14/review3/hunger.c) 
+
 > 运行结果如下：
+
+~~~C
+./hunger yanghan
+parent read lock
+parent get read lock succ, sleep 3 seconds
+child 0 write lock
+child 1 read lock
+child 1 get read lock succ
+child 2 read lock
+child 2 get read lock succ
+child 3 read lock
+child 3 get read lock succ
+child 4 read lock
+child 4 get read lock succ
+child 1 release read lock
+child 2 release read lock
+child 3 release read lock
+child 4 release read lock
+child 0 get write lock succ
+child 0 release write lock
+~~~
 
 ####  14.2&emsp; 查看你所用系统的头文件，并研究 select 和 4 个 FD 宏的实现。
 
 > 与 FD 宏有关的实现解析如下图：
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/14.2.png)
 
 > select 的实现是：对于每个传入的不为 NULL 的描述符集，每个描述符集中 “小网格” 被置为 1 的代表是需要关心的文件描述符。那么如果发生了若干关心的事件后，就遍历相应的描述符集，把没有发生事件的文件描述符对应的小网格的 1 给清掉，然后统计每个描述符集中剩余的 1 的总数，作为 select 的返回值。
 
@@ -851,7 +876,18 @@ parent unlocking locks..."
 
 > sigxxxset 等一系列宏函数的实现比较简单，下面贴出。
 
+~~~C
+#define __sigbits(signo)    (1 << ((signo) - 1))
+#define    sigaddset(set, signo)    (*(set) |= __sigbits(signo), 0)
+#define    sigdelset(set, signo)    (*(set) &= ~__sigbits(signo), 0)
+#define    sigismember(set, signo)    ((*(set) & __sigbits(signo)) != 0)
+#define    sigemptyset(set)    (*(set) = 0, 0)
+#define    sigfillset(set)        (*(set) = ~(sigset_t)0, 0)
+~~~
+
 ####  14.5&emsp; 用 select 或 poll 实现一个与 sleep 类似的函数 sleep_us，不同之处是要等待指定的若干微妙，比较这个函数和 BSD 中的 usleep 函数。
+
+[sleep_us.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_14/review3/sleep_us.c) 
 
 ####  14.6&emsp; 是否可以利用建议性记录锁来实现图 10-24 中的函数 TELL_WAIT，TELL_PARENT，TELL_CHILD，WAIT_PARENT 以及 WAIT_CHILD？如果可以，编写这些函数并测试其功能。
 
