@@ -762,9 +762,9 @@ if (setjmp(env_alrm) != 0) {
 
 ####  12.1&emsp; 在 Linux 系统中运行下图程序，但把输出结果重定向到一个文件中，并解释结果。
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/12.1.1.png)
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/12.1.2.png)
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/12.1.3.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/12.1.1.jpeg)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/12.1.2.jpeg)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/12.1.3.jpeg)
 
 > 因为标准输出被重定向到了文件，所以它变为全缓冲，只有当缓冲区满或者清刷缓冲区时才发生写入操作，在调用 fork 前，以下内容
 > "parent about to fork...
@@ -794,8 +794,8 @@ parent unlocking locks..."
 
 ####  12.6&emsp; 重新实现下图的程序，在不使用 nanosleep 或 clock_nanosleep 的情况下使它成为线程安全的。
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/12.6.1.png)
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/12.6.2.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/12.6.1.jpeg)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/12.6.2.jpeg)
 
 > `select` 是一个线程安全函数，而且可以阻塞线程到指定的时间流逝，因此使用该函数即可完成 `sleep` 的功能。`select` 返回 0 代表指定的时间流逝，如果返回非 0，又因为我们没有监听任何文件描述符的可读可写和异常事件，因此可能是被其他信号中断，此时记录下总共睡眠的时间，然后返回未睡够的时间即可。
 
