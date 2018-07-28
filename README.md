@@ -895,7 +895,15 @@ child 0 release write lock
 
 > 确定管道容量的代码如下：
 
+[pipe_capacity.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_14/review3/pipe_capacity.c) 
+
 > 运行结果如下：
+
+~~~C
+./pipe_capacity                 
+pipe capacity = 65536
+PIPE_BUF = 512
+~~~
 
 > PIPE_BUF 是能够原子性写入管道的数据的最大长度，而非管道的容量。
 
@@ -906,7 +914,6 @@ child 0 release write lock
 ####  14.10&emsp; 运行下图中的程序复制一个文件，检查输入文件的上一次访问时间是否更新了？
 
 ####  14.11&emsp; 在下图程序中，
-
 
 
 
