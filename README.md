@@ -1002,6 +1002,23 @@ HUP INT QUIT ILL TRAP ABRT EMT FPE KILL BUS SEGV SYS PIPE ALRM TERM URG STOP TST
 
 ####  15.5&emsp; 在上图程序中，用标准 I/O 库代替进行管道读、写的 read 和 write。
 
+> 测试代码如下：
+
+> 结果如下：
+
+~~~C
+./coprocess 
+1 2
+3
+3 4
+7
+7 8
+15
+10 19
+29
+^C
+~~~
+
 ####  15.6&emsp; POSIX.1 加入 waitpid 函数的理由之一是，POSIX.1 之前的大多数系统不能处理下面的代码。
 
 ~~~C
@@ -1013,7 +1030,13 @@ if (pclose(fp) == -1)
 	...
 ~~~
 
-#### 若在这段代码中不使用 waitpid 函数会如何？用 wait 代替呢？  
+#### 若在这段代码中不使用 waitpid 函数会如何？用 wait 代替呢？ 
+
+> `popen(const char *cmdstring, const char *type)` 和 `pclose(FILE *fp)` 的实现如下：
+
+> `system(const char *cmdstring)` 实现如下： 
+
+> 可以发现，如果 system 中调用 `wait` 而不是 `waitpid` 等待某一指定进程，那么在 `popen` 中创建的子进程会在 `system` 中被获取到终止状态，那么当调用 `pclose` 时，其中的 `wait` 会因为等待不到 `popen` 创建的子进程而报错（因为 `popen` 记录了打开每个 fd 的进程 ID），所以一定要 `wait` 到 `popen` 创建的那个子进程才 OK，在这里 pclose `wait` 到了 `system` 创建的子进程。
 
 ####  15.7&emsp; 当一个管道被写者关闭后，解释 select 和 poll 是如何处理该管道的文件描述符的。为了验证答案是否正确，编写两个小测试程序，一个用 select，另一个用 poll。当一个管道的读端被关闭时，请重做此习题以查看该管道的输出描述符。
 
