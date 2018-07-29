@@ -950,6 +950,82 @@ access time :  1532783365841656948
 > 执行复制完成后，复制出来的新视频仍然能够正常打开播放。
 
 
+# Chapter_15
+
+
+####  15.1&emsp; 在下图程序中，在父进程代码的末尾删除 waitpid 前的 close，结果将如何？
+
+> 测试代码如下：
+
+> 结果是，当翻页程序翻到最末尾时不会终止，因为没有读到 EOF，所以子进程阻塞在 read 调用中。
+
+####  15.2&emsp; 在上图程序中，在父进程代码的末尾删除 waitpid，结果将如何？
+
+> 测试代码如下：
+
+> 结果是，分页程序只显示了文件的一部分内容。原因看了答案也不太明白....
+
+####  15.3&emsp; 如果 popen 函数的参数是一个不存在的命令，会造成什么后果？编写一段小程序对此进行测试。
+
+> 测试代码如下：
+
+> 先试一个存在的命令，结果如下：
+~~~C
+./popen "ls -l"
+total 64
+-rwxr-xr-x  1 YangHan  staff  9060  7 29 15:40 more
+-rw-r--r--  1 YangHan  staff  1957  7 29 15:40 more.c
+-rwxr-xr-x  1 YangHan  staff  8824  7 29 15:49 popen
+-rw-r--r--@ 1 YangHan  staff   924  7 29 15:49 popen.c
+~~~
+
+> 再试一个不存在的命令，结果如下：
+~~~C
+./popen "haha"
+sh: haha: command not found
+~~~
+
+####  15.4&emsp; 在下图程序中，删除信号处理程序，执行该程序，然后终止子进程。输入一行输入后，怎样才能说明父进程是由 SIGPIPI 终止的？
+
+> 测试代码如下：
+
+> 输出结果如下：
+~~~C
+./coprocess 
+1 2
+echo $?
+141
+kill -l
+HUP INT QUIT ILL TRAP ABRT EMT FPE KILL BUS SEGV SYS PIPE ALRM TERM URG STOP TSTP CONT CHLD TTIN TTOU IO XCPU XFSZ VTALRM PROF WINCH INFO USR1 USR2
+~~~
+> 当父进程终止后，用 shell 命令 `$ echo $?` 查看父进程的退出码，退出码为 128 + 信号编号，使用 `kill -l` 命令列出所有信号编号，则 `SIGPIPE` 为 `13`，`128 + 13 = 141`，证明了该父进程是由 `SIGPIPE` 终止。
+
+####  15.5&emsp; 在上图程序中，用标准 I/O 库代替进行管道读、写的 read 和 write。
+
+####  15.6&emsp; POSIX.1 加入 waitpid 函数的理由之一是，POSIX.1 之前的大多数系统不能处理下面的代码。
+
+~~~C
+if ( (fp = popen("/bin/true", "r")) == NULL)
+	...
+if ( (rc = system("sleep 100")) == -1)
+	...
+if (pclose(fp) == -1)
+	...
+~~~
+
+#### 若在这段代码中不使用 waitpid 函数会如何？用 wait 代替呢？  
+
+####  15.7&emsp; 当一个管道被写者关闭后，解释 select 和 poll 是如何处理该管道的文件描述符的。为了验证答案是否正确，编写两个小测试程序，一个用 select，另一个用 poll。当一个管道的读端被关闭时，请重做此习题以查看该管道的输出描述符。
+
+####  15.8&emsp; 如果 popen 以 type 为 "r" 执行 cmdstring，并将结果写到标准错误输出，结果会如何？
+
+
+
+
+
+
+
+
 
 
 
