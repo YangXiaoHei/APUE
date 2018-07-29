@@ -1040,7 +1040,82 @@ if (pclose(fp) == -1)
 
 ####  15.7&emsp; 当一个管道被写者关闭后，解释 select 和 poll 是如何处理该管道的文件描述符的。为了验证答案是否正确，编写两个小测试程序，一个用 select，另一个用 poll。当一个管道的读端被关闭时，请重做此习题以查看该管道的输出描述符。
 
+> select 的测试程序如下：
+
+> 运行结果如下：
+
+~~~C
+child begin to sleep 3 seconds
+no readable event, try again!
+no readable event, try again!
+child wakeup
+read content : 123
+read content : 456
+read content : 789
+EOF
+~~~
+
+> poll 的测试程序如下：
+
+> 运行结果如下：
+
+~~~C
+child proc begin to sleep 3 secs
+no readable event occur, try again!
+child wakeup
+read content : 123
+read content : 456
+read content : 789
+EOF
+~~~
+
+> 在 Mac OS X 上管道被写者关闭后， select 和 poll 依然认为管道可读，只不过会真的去读了后会返回 0。
+
+**尽管管道的文件描述符没有被设置为非阻塞，但读一个写端关闭的管道即使是阻塞型的描述符依然会返回 0，而不是阻塞在 read 调用上。**
+
 ####  15.8&emsp; 如果 popen 以 type 为 "r" 执行 cmdstring，并将结果写到标准错误输出，结果会如何？
+
+> 测试程序如下：
+
+> 运行结果如下：（貌似和写到 stdout 并没什么区别？？？）
+
+~~~C
+➜  review git:(master) ✗ ./popen_stderr "ls -l"
+total 240
+-rwxr-xr-x  1 YangHan  staff  8432  7 29 16:09 add
+-rw-r--r--@ 1 YangHan  staff  1178  7 29 16:09 add.c
+-rwxr-xr-x  1 YangHan  staff  9136  7 29 16:14 coprocess
+...
+~~~
+
+####  15.9&emsp; 既然 popen 函数能使 shell 执行它的 cmdstring 参数，那么 cmdstring 终止时会产生什么结果？（提示：画出与此相关的所有进程）
+
+> 各进程如下图所示：`sh` `wait` 了 `cmdstring` 的进程，而 `pclose` 将会 `wait` `sh` 进程。最后 `shell` 会 `wait` `a.out` 进程。 
+
+
+####  15.10&emsp; POSIX.1 特别声明没有定义为读写而打开 FIFO。虽然大多数 UNIX 系统允许读写 FIFO，但是请用非阻塞方法实现为读写而打开 FIFO。
+
+####  15.11&emsp; 除非文件包含敏感数据或机密数据，否则允许其他用户独文件不会造成损害。但是，如果一个恶意进程读取了被一个服务器进程和几个客户进程使用的消息队列中的一条消息后，会产生什么后果？恶意进程需要知道哪些信息就可以读消息队列？
+
+####  15.12&emsp; 编写一段程序完成下面的工作。执行一个循环 5 次，在每次循环中，创建一个消息队列，打印该队列的标识符，然后删除队列。接着再循环 5 次，在每次循环中利用键 IPC_PRIVATE 创建消息队列，并将一条消息放在队列中。程序终止后用 ipcs(1) 查看消息队列。解释队列标识符的变化。
+
+####  15.13&emsp; 描述如何在共享存储段中建立一个数据对象的链接列表。列表指针如何存储？
+
+####  15.14&emsp; 画出下图程序中下列值随时间变化的曲线图：父进程和子进程中的变量  i、共享存储区中的长整型值以及 update 函数的返回值，假设子进程在 fork 后先运行。
+
+####  15.15&emsp; 使用 XSI 共享存储函数代替共享存储映射区，改写下图程序。
+
+####  15.16&emsp; 使用 XSI 信号量函数改写 15.15 题图中的程序，实现父子进程的交替。
+
+####  15.17&emsp; 使用建议性记录锁改写 15.15 题图中的程序，实现父子进程的交替。
+
+####  15.18&emsp; 使用 POSIX 信号量函数改写 15.15 题图中的程序，实现父子进程的交替。
+
+
+
+
+
+
 
 
 
