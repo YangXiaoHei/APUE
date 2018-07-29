@@ -916,13 +916,19 @@ PIPE_BUF = 512
 ####  14.9&emsp; 回忆下图，在你的系统上找到一个损益平衡点，从此点开始，使用 writev 将快于你自己使用单个 write 复制数据。
 
 > 测试代码如下：
+[balance.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_14/review3/balance.c) 
 
 > 不管怎么测试 `writev` 都比缓冲区复制，然后一次 `write` 更快啊😂....
 
 ####  14.10&emsp; 运行下图中的程序复制一个文件，检查输入文件的上一次访问时间是否更新了？
 
 > 使用内存映射复制文件的程序如下：
+
+[copy.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_14/review3/copy.c) 
+
 > 提取文件上一次访问时间的程序如下（纳秒级别）：
+
+[atime.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_14/review3/atime.c) 
 
 > 先检测当前的上一次访问时间：
  
@@ -947,6 +953,9 @@ access time :  1532783365841656948
 ####  14.11&emsp; 在下图程序中，在调用 mmap 后调用 close 关闭输入文件，以验证关闭描述符不会使内存映射 I/O 失效。
 
 > 使用内存映射复制文件的程序如下（在内存映射后关闭文件描述符）：
+
+[copy.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_14/review3/copy.c) 
+
 > 执行复制完成后，复制出来的新视频仍然能够正常打开播放。
 
 
@@ -957,17 +966,23 @@ access time :  1532783365841656948
 
 > 测试代码如下：
 
+[more.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_15/review/more.c) 
+
 > 结果是，当翻页程序翻到最末尾时不会终止，因为没有读到 EOF，所以子进程阻塞在 read 调用中。
 
 ####  15.2&emsp; 在上图程序中，在父进程代码的末尾删除 waitpid，结果将如何？
 
 > 测试代码如下：
 
+[more.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_15/review/more.c) 
+
 > 结果是，分页程序只显示了文件的一部分内容。原因看了答案也不太明白....
 
 ####  15.3&emsp; 如果 popen 函数的参数是一个不存在的命令，会造成什么后果？编写一段小程序对此进行测试。
 
 > 测试代码如下：
+
+[use_popen.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_15/review/use_popen.c) 
 
 > 先试一个存在的命令，结果如下：
 ~~~C
@@ -989,6 +1004,10 @@ sh: haha: command not found
 
 > 测试代码如下：
 
+[coprocess.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_15/review/coprocess.c) 
+
+[add.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_15/review/add.c) 
+
 > 输出结果如下：
 ~~~C
 ./coprocess 
@@ -1003,6 +1022,10 @@ HUP INT QUIT ILL TRAP ABRT EMT FPE KILL BUS SEGV SYS PIPE ALRM TERM URG STOP TST
 ####  15.5&emsp; 在上图程序中，用标准 I/O 库代替进行管道读、写的 read 和 write。
 
 > 测试代码如下：
+
+[coprocess.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_15/review/dir_copro/coprocess.c) 
+
+[add.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_15/review/dir_copro/add.c) 
 
 > 结果如下：
 
@@ -1034,13 +1057,18 @@ if (pclose(fp) == -1)
 
 > `popen(const char *cmdstring, const char *type)` 和 `pclose(FILE *fp)` 的实现如下：
 
+[popen_imp.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_15/review/popen_imp.c) 
+
 > `system(const char *cmdstring)` 实现如下： 
+[system_imp.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_15/review/system_imp.c) 
 
 > 可以发现，如果 system 中调用 `wait` 而不是 `waitpid` 等待某一指定进程，那么在 `popen` 中创建的子进程会在 `system` 中被获取到终止状态，那么当调用 `pclose` 时，其中的 `wait` 会因为等待不到 `popen` 创建的子进程而报错（因为 `popen` 记录了打开每个 fd 的进程 ID），所以一定要 `wait` 到 `popen` 创建的那个子进程才 OK，在这里 pclose `wait` 到了 `system` 创建的子进程。
 
 ####  15.7&emsp; 当一个管道被写者关闭后，解释 select 和 poll 是如何处理该管道的文件描述符的。为了验证答案是否正确，编写两个小测试程序，一个用 select，另一个用 poll。当一个管道的读端被关闭时，请重做此习题以查看该管道的输出描述符。
 
 > select 的测试程序如下：
+
+[select.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_15/review/select.c) 
 
 > 运行结果如下：
 
@@ -1056,6 +1084,8 @@ EOF
 ~~~
 
 > poll 的测试程序如下：
+
+[poll.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_15/review/poll.c) 
 
 > 运行结果如下：
 
@@ -1077,6 +1107,8 @@ EOF
 
 > 测试程序如下：
 
+[popen_stderr.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_15/review/popen_stderr.c) 
+
 > 运行结果如下：（貌似和写到 stdout 并没什么区别？？？）
 
 ~~~C
@@ -1096,6 +1128,8 @@ total 240
 ####  15.10&emsp; POSIX.1 特别声明没有定义为读写而打开 FIFO。虽然大多数 UNIX 系统允许读写 FIFO，但是请用非阻塞方法实现为读写而打开 FIFO。
 
 > 测试代码如下：（我就比较好奇用 open(fifo_path, O_RDWR) 打开在什么系统下会失败？在 linux 3.13 上和 Mac OS X 10.13.4 上测试都 OK） 
+
+[fifo.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_15/review/fifo.c) 
 
 ####  15.11&emsp; 除非文件包含敏感数据或机密数据，否则允许其他用户独文件不会造成损害。但是，如果一个恶意进程读取了被一个服务器进程和几个客户进程使用的消息队列中的一条消息后，会产生什么后果？恶意进程需要知道哪些信息就可以读消息队列？
 
