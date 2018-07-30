@@ -661,13 +661,21 @@ utput from child
 
 ####  10.1&emsp; 删除图 10-2 程序中的 for(;;) 语句，结果会怎样？为什么？
 
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/10.1.1.jpeg)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/10.1.2.jpeg)
+
 > 删掉 for(;;) 后，当程序在阻塞中接收到一个信号后，执行完信号不捕获函数就退出，因为 `pause` 的阻塞效果只执行了一次，它接收到信号就被中断。
 
 ####  10.2&emsp; 实现 10.22 节中说明的 sig2str 函数。
 
-####  10.3&emsp; 画出运行图 10-9 程序时的栈帧情况。
+####  10.3&emsp; 画出运行下图程序时的栈帧情况。
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/10.3.1.jpeg)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/10.3.2.jpeg)
 
-####  10.4&emsp; 图 10-11 程序中利用 setjmp 和 longjmp 设置 I/O 操作的超时，下面的代码也常见用于此种目的：
+####  10.4&emsp; 下图程序中利用 setjmp 和 longjmp 设置 I/O 操作的超时，下面的代码也常见用于此种目的：
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/10.4.1.jpeg)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/10.4.2.jpeg)
 
 ~~~C
 signal(SIGALRM, sig_arlm);
@@ -698,13 +706,16 @@ if (setjmp(env_alrm) != 0) {
 
 ####  10.5&emsp; 仅使用一个定时器（alarm 或较高精度的 setitimer)，构造一组函数，使得进程在该单一定时器基础上可以设置任意数量的定时器。
 
-####  10.6&emsp; 编写一段程序测试图 10-24 中父进程和子进程的同步函数，要求进程创建一个文件并向文件写一个整数 0，然后，进程调用 fork ，接着，父进程和子进程交替增加文件中的计数器值，每次计数器值增加 1 时，打印是哪一个进程（子进程或父进程）进行了该增加 1 操作。
+####  10.6&emsp; 编写一段程序测试下图中父进程和子进程的同步函数，要求进程创建一个文件并向文件写一个整数 0，然后，进程调用 fork ，接着，父进程和子进程交替增加文件中的计数器值，每次计数器值增加 1 时，打印是哪一个进程（子进程或父进程）进行了该增加 1 操作。
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/10.6.1.jpeg)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/10.6.2.jpeg)
 
 [sync.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_09/review/sync.c) 
 
 运行结果如下 :
 
-![](https://github.com/YangXiaoHei/APUE/blob/master/Image/10.6.png)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/10.6.jpeg)
 
 ####  10.7&emsp; 下列程序中，若调用者捕获了 SIGARBT 并从信号处理程序中返回，为什么不是仅仅调用 _exit，而要恢复其默认设置并再次调用 kill ?
 
@@ -714,13 +725,18 @@ if (setjmp(env_alrm) != 0) {
 
 ####  10.9&emsp; 重写下图函数，要求它能处理 10-1 中的所有信号，每次循环处理当前信号屏蔽字中的每一个信号。
 
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/10.9.1.jpeg)
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/10.9.2.jpeg)
+
 [pr_mask.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_10/review/pr_mask.c) 
 
 ####  10.10&emsp; 编写一段程序，要求在一个无限循环中调用 sleep(60) 函数，每 5 分钟（即 5 次循环）取当前的日期和时间，并打印 tm_sec 字段。将程序执行一个晚上，请解释其结果。有些程序，如 cron 守护进程，每分钟运行一次，它是如何处理这类工作的？
 
 [time.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_10/review/time.c) 
 
-####  10.11&emsp; 修改图 3-5 的程序：要求：（a）将 BUFFSIZE 改为 100；（b）用  signal_inter 函数捕捉 SIGXFSZ 信号量并打印消息，然后从信号处理程序中返回；（c）如果没有写满请求的字节数，则打印 write 的返回值，将软资源 RLIMIT_FSIZE 更改为 1024 字节，然后复制一个大于 1024 字节的文件，在各种不同的系统上运行新程序，其结果如何？为什么？
+####  10.11&emsp; 修改下图程序：要求：（a）将 BUFFSIZE 改为 100；（b）用  signal_inter 函数捕捉 SIGXFSZ 信号量并打印消息，然后从信号处理程序中返回；（c）如果没有写满请求的字节数，则打印 write 的返回值，将软资源 RLIMIT_FSIZE 更改为 1024 字节，然后复制一个大于 1024 字节的文件，在各种不同的系统上运行新程序，其结果如何？为什么？
+
+![](https://github.com/YangXiaoHei/APUE/blob/master/Image/10.11.1.jpeg)
 
 [sigxfsz.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_10/review/sigxfsz.c) 
 
