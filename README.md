@@ -1165,6 +1165,7 @@ total 240
 
 > 测试代码如下：
 
+[flock_sync.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_15/review/flock_sync.c) 
 
 > 运行结果如下：
 
@@ -1194,6 +1195,7 @@ parent release lock
 
 > 测试代码如下：
 
+[sem_sync.c](https://github.com/YangXiaoHei/APUE/blob/master/Chapter_15/review/sem_sync.c) 
 
 > 运行结果如下：
 
