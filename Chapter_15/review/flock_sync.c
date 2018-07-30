@@ -106,7 +106,7 @@ int main(int argc, char const *argv[])
             else
                 printf("parent release lock\n");
             
-            sleep(rand() % 3 + 1);
+            sleep(1);
         }
 
         int status;
@@ -157,7 +157,7 @@ int main(int argc, char const *argv[])
             else
                 printf("child release lock\n");
 
-            sleep(rand() % 3 + 1);
+            sleep(1);
         }
         exit(0);
     }

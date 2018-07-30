@@ -1163,9 +1163,49 @@ total 240
 
 ####  15.17&emsp; 使用建议性记录锁改写 15.15 题图中的程序，实现父子进程的交替。
 
+> 测试代码如下：
+
+
+> 运行结果如下：
+
+~~~C
+./flock_sync heihei 3
+parent lock succ
+parent write 1 
+parent release lock
+child lock succ
+child write 2 
+child release lock
+child lock succ
+child write 3 
+child release lock
+parent lock succ
+parent write 4 
+parent release lock
+child lock succ
+child write 5 
+child release lock
+parent lock succ
+parent write 6 
+parent release lock
+~~~
+
 ####  15.18&emsp; 使用 POSIX 信号量函数改写 15.15 题图中的程序，实现父子进程的交替。
 
+> 测试代码如下：
 
+
+> 运行结果如下：
+
+~~~C
+./sem_sync xixi 3
+parent write 1 
+child write 2 
+child write 3 
+parent write 4 
+child write 5 
+parent write 6 
+~~~
 
 
 
